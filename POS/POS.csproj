@@ -1,0 +1,76 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\pic\1041633.png" />
+    <None Remove="Assets\pic\38-512.png" />
+    <None Remove="Assets\pic\Add-To-Cart-Button-PNG-Pic.png" />
+    <None Remove="Assets\pic\backword.png" />
+    <None Remove="Assets\pic\bank.jpg" />
+    <None Remove="Assets\pic\buy.jpg" />
+    <None Remove="Assets\pic\cart.jpg" />
+    <None Remove="Assets\pic\cell-14-2-480.png" />
+    <None Remove="Assets\pic\checkmark-1-1.png" />
+    <None Remove="Assets\pic\christmas-date-icon.png" />
+    <None Remove="Assets\pic\close.jpg" />
+    <None Remove="Assets\pic\customers.jpg" />
+    <None Remove="Assets\pic\delivery.jpg" />
+    <None Remove="Assets\pic\el-bostan.jpg" />
+    <None Remove="Assets\pic\handshake-651818_960_720.png" />
+    <None Remove="Assets\pic\inventory.jpg" />
+    <None Remove="Assets\pic\math_delete.png" />
+    <None Remove="Assets\pic\menu.png" />
+    <None Remove="Assets\pic\new.png" />
+    <None Remove="Assets\pic\pos.jpg" />
+    <None Remove="Assets\pic\refresh.png" />
+    <None Remove="Assets\pic\Sells.jpg" />
+    <None Remove="Assets\pic\settings.jpg" />
+    <None Remove="Assets\pic\settings.png" />
+    <None Remove="Assets\pic\wallet.png" />
+    <None Remove="Assets\pic\workers.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\pic\wallet.png" />
+    <Resource Include="Assets\pic\customers.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\pic\1041633.png" />
+    <Resource Include="Assets\pic\38-512.png" />
+    <Resource Include="Assets\pic\Add-To-Cart-Button-PNG-Pic.png" />
+    <Resource Include="Assets\pic\backword.png" />
+    <Resource Include="Assets\pic\bank.jpg" />
+    <Resource Include="Assets\pic\buy.jpg" />
+    <Resource Include="Assets\pic\cart.jpg" />
+    <Resource Include="Assets\pic\cell-14-2-480.png" />
+    <Resource Include="Assets\pic\checkmark-1-1.png" />
+    <Resource Include="Assets\pic\christmas-date-icon.png" />
+    <Resource Include="Assets\pic\close.jpg" />
+    <Resource Include="Assets\pic\delivery.jpg" />
+    <Resource Include="Assets\pic\el-bostan.jpg" />
+    <Resource Include="Assets\pic\handshake-651818_960_720.png" />
+    <Resource Include="Assets\pic\inventory.jpg" />
+    <Resource Include="Assets\pic\math_delete.png" />
+    <Resource Include="Assets\pic\menu.png" />
+    <Resource Include="Assets\pic\new.png" />
+    <Resource Include="Assets\pic\pos.jpg" />
+    <Resource Include="Assets\pic\refresh.png" />
+    <Resource Include="Assets\pic\Sells.jpg" />
+    <Resource Include="Assets\pic\settings.jpg" />
+    <Resource Include="Assets\pic\settings.png" />
+    <Resource Include="Assets\pic\workers.jpg" />
+  </ItemGroup>
+
+</Project>
