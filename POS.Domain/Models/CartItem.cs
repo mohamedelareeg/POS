@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace POS.Models
+namespace POS.Domain.Models
 {
     public class CartItem : INotifyPropertyChanged
     {
@@ -76,7 +76,7 @@ namespace POS.Models
         {
             get
             {
-                if (Price < (Cost * Quantity))
+                if (Price < Cost * Quantity)
                 {
 
                     return "Red";

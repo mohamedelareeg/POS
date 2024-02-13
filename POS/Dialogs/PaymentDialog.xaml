@@ -1,0 +1,172 @@
+﻿<Window x:Class="POS.PaymentDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:fa="http://schemas.fontawesome.io/icons/" 
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:controls="clr-namespace:POS.Components"
+        xmlns:converters="clr-namespace:POS.Validations"
+        xmlns:Icon="http://schemas.fontawesome.io/icons/" 
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Height="430" Width="600" WindowState="Normal" WindowStyle="None" Background="White"
+        AllowsTransparency="True">
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <Style x:Key="CustomButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="PART_Border"
+                         Cursor="Hand"
+                 Background="{TemplateBinding Background}"
+                 BorderBrush="{TemplateBinding BorderBrush}"
+                 BorderThickness="{TemplateBinding BorderThickness}"
+                         
+                 CornerRadius="{StaticResource AppCornerRadius}" Width="{Binding Width, FallbackValue=auto}" Padding="5, 0" MinWidth="{Binding MinWidth, FallbackValue=100}" Height="35" Margin="5, 0">
+                            <ContentPresenter x:Name="PART_ContentPresenter"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                                       TextElement.FontSize="14"
+                                       TextElement.FontFamily="{StaticResource Montserrat_Semibold}"
+                                       TextElement.FontStretch="Expanded"
+                               TextElement.Foreground="{TemplateBinding Foreground}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="PART_Border" Property="Background" Value="#004FC4" />
+                                <Setter TargetName="PART_ContentPresenter" Property="TextElement.Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="PART_Border" Property="Background" Value="DarkGray" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="PART_Border" Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CustomLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0 10 0 10"/>
+            <Setter Property="FlowDirection" Value="RightToLeft"/>
+        </Style>
+        <Style x:Key="CustomInputStyle" TargetType="TextBox">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="0 0 0 10"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="FlowDirection" Value="LeftToRight"/>
+        </Style>
+        <Style x:Key="CustomDropdownStyle" TargetType="ComboBox">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="0 0 0 10"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="FlowDirection" Value="LeftToRight"/>
+        </Style>
+    </Window.Resources>
+    <Grid  FlowDirection="RightToLeft">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <controls:WindowHeader Grid.Row="0" HeaderTitle="شاشة السداد" />
+        <Border Grid.Row="1" Margin="10" CornerRadius="15" Background="White" BorderThickness="2" BorderBrush="{StaticResource PrimaryBackgroundColor}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+              
+                <Image Grid.Column="1" Margin="10" Source="/Assets/pic/pos.jpg" Stretch="Uniform"  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                <Grid Grid.Column="0" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="الكمية الإجمالية:" Style="{StaticResource CustomLabelStyle}" Grid.Row="0"/>
+                    <TextBox Text="{Binding TotalQuantity}" Style="{StaticResource CustomInputStyle}" IsReadOnly="True" Grid.Row="0"/>
+                    <TextBlock Text="المجموع الفرعي:" Style="{StaticResource CustomLabelStyle}" Margin="0 10 0 0" Grid.Row="1"/>
+                    <TextBox Text="{Binding SubTotal}" Style="{StaticResource CustomInputStyle}" IsReadOnly="True" Grid.Row="1"/>
+                    <TextBlock Text="الضريبة (%):" Style="{StaticResource CustomLabelStyle}" Margin="0 10 0 0" Grid.Row="2"/>
+                    <TextBox Text="{Binding TaxPercentage}" Style="{StaticResource CustomInputStyle}" Grid.Row="2"/>
+                    <TextBlock Text="الخصم (%):" Style="{StaticResource CustomLabelStyle}" Margin="0 10 0 0" Grid.Row="3"/>
+                    <TextBox Text="{Binding DiscountPercentage}" Style="{StaticResource CustomInputStyle}" Grid.Row="3"/>
+                    <TextBlock Text="الإجمالي:" Style="{StaticResource CustomLabelStyle}" Margin="0 10 0 0" Grid.Row="4"/>
+                    <TextBox Text="{Binding Total}" Style="{StaticResource CustomInputStyle}" IsReadOnly="True" Grid.Row="4"/>
+                    <TextBlock Text="طريقة الدفع:" Style="{StaticResource CustomLabelStyle}" Margin="0 10 0 0" Grid.Row="5"/>
+                    <ComboBox ItemsSource="{Binding PaymentMethods}" SelectedItem="{Binding SelectedPaymentMethod}" Style="{StaticResource CustomDropdownStyle}" Grid.Row="5"/>
+                    <TextBlock Text="حساب العميل:" Style="{StaticResource CustomLabelStyle}" Margin="0 10 0 0" Visibility="{Binding IsAccountPaymentMode, Converter={StaticResource BoolToVisibilityConverter}}" Grid.Row="6"/>
+                    <ComboBox ItemsSource="{Binding CustomerAccounts}" SelectedItem="{Binding SelectedCustomerAccount}" Style="{StaticResource CustomDropdownStyle}" Visibility="{Binding IsAccountPaymentMode, Converter={StaticResource BoolToVisibilityConverter}}" Grid.Row="6"/>
+                    <Grid Grid.Row="7">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Proceed Button -->
+                        <Button Content="اتمام عملية البيع" 
+        Command="{Binding ProceedCommand}" 
+        FontSize="18" 
+        Style="{StaticResource CustomButtonStyle}"
+                                  Foreground="White"
+        Background="Green"
+                            HorizontalAlignment="Right" 
+        Margin="0,20,10,20"/>
+
+                            <!-- Cancel Button -->
+                            <Button Content="الغاء عملية البيع" 
+        Command="{Binding CancelCommand}" 
+        Style="{StaticResource CustomButtonStyle}" 
+        Margin="10,20,0,20" 
+        FontSize="18" 
+                                    Foreground="White"
+        Background="Red" 
+                                HorizontalAlignment="Left" 
+        Grid.Column="1"/>
+
+                    </Grid>
+
+                    <!-- Payment Method Icons -->
+                    <StackPanel Grid.Column="1" Grid.Row="10" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 10 0 0">
+                        <!-- Cash Icon -->
+                        <materialDesign:PackIcon Kind="Cash" Margin="5" FontSize="24" Foreground="Green"/>
+                        <!-- Card Icon -->
+                        <materialDesign:PackIcon Kind="CreditCard" Margin="5" FontSize="24" Foreground="Blue"/>
+                        <!-- Visa Icon -->
+                        <materialDesign:PackIcon Kind="CreditCardOutline" Margin="5" FontSize="24" Foreground="Blue"/>
+                        <!-- Debit Icon -->
+                        <materialDesign:PackIcon Kind="Bank" Margin="5" FontSize="24" Foreground="Blue"/>
+                    </StackPanel>
+
+                </Grid>
+
+            </Grid>
+        </Border>
+
+    </Grid>
+ 
+</Window>

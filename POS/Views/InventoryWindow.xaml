@@ -4,9 +4,827 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:POS.Views"
+        xmlns:fa="http://schemas.fontawesome.io/icons/" 
+        xmlns:controls="clr-namespace:POS.Components"
+        xmlns:converters="clr-namespace:POS.Validations"
+          xmlns:context="clr-namespace:POS.ViewModels"
         mc:Ignorable="d"
-        Title="InventoryWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        WindowStartupLocation="CenterScreen"
+         WindowState="Maximized" WindowStyle="None" Background="Transparent"
+        AllowsTransparency="True"
+        Closed="Window_Closed">
+
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+        <Style x:Key="Menu_2_Panel_Style" TargetType="StackPanel">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsItemSelected}" Value="True">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="Menu_panel_Style" TargetType="StackPanel">
+            <Setter Property="Visibility" Value="Visible"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsItemSelected}" Value="True">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <!-- ModernTextBoxStyle -->
+        <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#F7F7F7"/>
+            <Setter Property="BorderBrush" Value="#DDDDDD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="ToolTip" Value="{Binding ErrorMessage}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                  VerticalAlignment="Center"
+                                  Padding="{TemplateBinding Padding}"
+                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                  Focusable="false"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style x:Key="CustomButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="PART_Border"
+                                Cursor="Hand"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                                
+                        CornerRadius="{StaticResource AppCornerRadius}" Width="{Binding Width, FallbackValue=auto}" Padding="5, 0" MinWidth="{Binding MinWidth, FallbackValue=100}" Height="35" Margin="5, 0">
+                            <ContentPresenter x:Name="PART_ContentPresenter"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                              TextElement.FontSize="14"
+                                              TextElement.FontFamily="{StaticResource Montserrat_Semibold}"
+                                              TextElement.FontStretch="Expanded"
+                                      TextElement.Foreground="{TemplateBinding Foreground}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="PART_Border" Property="Background" Value="#004FC4" />
+                                <Setter TargetName="PART_ContentPresenter" Property="TextElement.Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="PART_Border" Property="Background" Value="DarkGray" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="PART_Border" Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CustomComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryBlueColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="MinWidth" Value="200"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+
+            <Setter Property="FontFamily" Value="{StaticResource Montserrat_Semibold}"/>
+
+        </Style>
+
+    </Window.Resources>
+    <Border CornerRadius="{StaticResource AppCornerRadius}" Background="White" FlowDirection="RightToLeft">
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <controls:WindowHeader Grid.Row="0" HeaderTitle="شاشة المخزون" />
+            <Border Grid.Row="1" BorderThickness="2" Margin="0,10,0,0" BorderBrush="LightSlateGray">
+                <Grid Grid.Row="2" Grid.RowSpan="2" Background="GhostWhite" >
+
+                    <Grid.RowDefinitions>
+
+                        <RowDefinition Height="5*"></RowDefinition>
+                        <RowDefinition Height="4*"></RowDefinition>
+                        <RowDefinition Height="1*"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                        <StackPanel Margin="20" Orientation="Vertical" Name="Panel_Add" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                        <!-- Product Details -->
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+
+                            <!-- Product Name and Category -->
+                            <StackPanel Orientation="Horizontal" Margin="10">
+                           
+                                <fa:FontAwesome Icon="Tags" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                
+                                <Label Content="اسم المنتج" FontSize="18" FontWeight="Bold" Margin="10"/>
+                                    <TextBlock Text="*" FontSize="18" Foreground="Red" VerticalAlignment="Center" Margin="0,0,5,0" Visibility="{Binding IsProductNameRequired, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                    <TextBox x:Name="ProductNameTextBox" 
+         Text="{Binding ProductName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+         Style="{StaticResource ModernTextBoxStyle}" 
+         FontSize="18" FontWeight="Bold" Margin="10" Height="40" Width="600" 
+         TextAlignment="Center" BorderBrush="Black" BorderThickness="1" 
+         IsEnabled="{Binding IsProductNameInputEnabled}"
+         TextChanged="TextBox_TextChanged">
+                                    </TextBox>
+
+                                    <fa:FontAwesome Icon="List" Margin="10,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                <Label Content="فئة المنتج" FontSize="18" FontWeight="Bold" Margin="10"/>
+                                    <TextBlock Text="*" Foreground="Red" FontSize="18" VerticalAlignment="Center" Margin="0,0,5,0" Visibility="{Binding IsProductCategoryRequired, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                    <ComboBox x:Name="ProductCategoryComboBox" 
+          ItemsSource="{Binding ProductCategories}" 
+          SelectedItem="{Binding SelectedProductCategory, UpdateSourceTrigger=PropertyChanged}" 
+          IsEnabled="{Binding IsProductCategoriesEnabled}" 
+          DisplayMemberPath="Name"
+          Foreground="Blue" 
+          Margin="10" 
+          Height="40" 
+          Width="300" 
+          FontSize="18" 
+          FontWeight="Bold" 
+          BorderBrush="Black" 
+          BorderThickness="1"/>
+
+                                        <Button Width="150" Height="40" Margin="10"  Style="{StaticResource CustomButtonStyle}" Background="SteelBlue" Foreground="White" BorderBrush="Black" FontSize="18" FontWeight="Bold" Command="{Binding ManageCategoryCommand}" IsEnabled="{Binding IsManageCategoryCommandEnabled}">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <fa:FontAwesome Icon="Cog" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="إدارة" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+
+                     
+                            <!-- Quantity and Unit and Color -->
+                            <StackPanel Orientation="Horizontal" Margin="10">
+                                
+                                <fa:FontAwesome Icon="BalanceScale" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                <Label Content="الكمية المتوفرة لديك" FontSize="18" FontWeight="Bold" Margin="10"/>
+                                    <TextBox x:Name="QuantityTextBox" Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontSize="18" FontWeight="Bold" Margin="10" Height="40" Width="250" TextAlignment="Center" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsQuantityInputEnabled}">
+                                   
+                                </TextBox>
+                                <fa:FontAwesome Icon="Cubes" Margin="10,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                <Label Content="الفئة / الوحدة" FontSize="18" FontWeight="Bold" Margin="10"/>
+                                    <ComboBox x:Name="UnitComboBox" ItemsSource="{Binding Units, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectedItem="{Binding SelectedUnit}" FontSize="18" FontWeight="Bold" Margin="10" Height="40" Width="250" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsUnitsInputEnabled}"/>
+                                <!-- Color -->
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:FontAwesome Icon="PaintBrush" Margin="10,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                    <Label Content="اللون" FontSize="18" FontWeight="Bold" Margin="10"/>
+                                        <ComboBox x:Name="ColorComboBox" ItemsSource="{Binding Colors, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectedItem="{Binding SelectedColor}" IsEnabled="{Binding IsColorsInputEnabled}" FontSize="18" FontWeight="Bold" Margin="10" Height="40" Width="300" BorderBrush="Black" BorderThickness="1"/>
+                                </StackPanel>
+                                </StackPanel>
+                            <Grid Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Wholesale Price -->
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <fa:FontAwesome Icon="CreditCard" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                    <Label Content="سعر الجملة" FontSize="18" FontWeight="Bold" Margin="10"/>
+                                        <TextBox x:Name="WholesalePriceTextBox" Text="{Binding WholesalePrice, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontWeight="Bold" FontSize="18" Margin="10" Height="40" MinWidth="250" TextAlignment="Center" Background="Azure" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsWholesalePriceInputEnabled}"/>
+                                </StackPanel>
+
+                                <!-- Retail Price -->
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,0">
+                                    <fa:FontAwesome Icon="CreditCard" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                    <Label Content="سعر البيع" FontSize="18" FontWeight="Bold" Margin="10"/>
+                                        <TextBox x:Name="RetailPriceTextBox" Text="{Binding RetailPrice, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontWeight="Bold" FontSize="18" Margin="10" Height="40" MinWidth="250" TextAlignment="Center" Background="Azure" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsRetailPriceInputEnabled}"/>
+                                </StackPanel>
+
+                                <!-- Profit -->
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="10,0,0,0">
+                                    <fa:FontAwesome Icon="LineChart" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                    <Label Content="الربح" FontSize="18" FontWeight="Bold" Margin="10"/>
+                                        <TextBox x:Name="ProfitTextBox" Text="{Binding Profit, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontWeight="Bold" FontSize="18" IsReadOnly="True" Margin="10" Height="40" MinWidth="250" TextAlignment="Center" Background="Azure" BorderBrush="Black" BorderThickness="1"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <StackPanel Orientation="Horizontal" Margin="10">
+                                <!-- Barcode Section -->
+                                <StackPanel Orientation="Horizontal" Margin="0">
+                                    <fa:FontAwesome Icon="Barcode" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                    <Label Content="رقم الباركود - للتعقب" FontSize="18" FontWeight="Bold" Margin="10"/>
+                                        <TextBox x:Name="BarcodeTextBox" Text="{Binding Barcode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" IsEnabled="{Binding IsBarcodeInputEnabled}" FontSize="18" FontWeight="Bold" Margin="10" Height="40" MinWidth="400" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
+                                        <Button Style="{StaticResource CustomButtonStyle}"
+        Height="40" Width="165"
+        FontSize="16" FontWeight="Bold"
+        Margin="10" Background="SteelBlue"
+        Foreground="White" BorderBrush="Transparent"
+        Command="{Binding GenerateRandomBarcodeCommand}"
+        IsEnabled="{Binding IsGenerateBarcodeButtonEnabled}"
+        HorizontalContentAlignment="Center">
+                                            <Viewbox>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <fa:FontAwesome Icon="Random" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="رقم عشوائي"  FontSize="12" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Viewbox>
+                                        </Button>
+
+
+
+                                    </StackPanel>
+
+                                <!-- Image Section -->
+                                <StackPanel Orientation="Horizontal" Margin="100,0,0,0">
+                                    <fa:FontAwesome Icon="Image" Margin="0,5,5,5" VerticalAlignment="Center" FontSize="18"/>
+                                    <Label Content="صورة السلعة" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Margin="0,5,5,5"/>
+                                    <StackPanel Orientation="Horizontal" Margin="5">
+                                        <Button x:Name="ChooseImageButton" Style="{StaticResource CustomButtonStyle}" IsEnabled="{Binding IsImageSelectionEnabled}" Command="{Binding ChooseImageCommand}" Background="SteelBlue" Foreground="White" BorderBrush="Transparent">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Padding="10" Text="تحديد صورة" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Image x:Name="ProductImage" Source="{Binding ProductImageSource}" Width="50" Height="50" Margin="25,0,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- Width and Weight and Length and Height -->
+                            <StackPanel Orientation="Horizontal" Margin="10">
+
+                                <!-- Weight -->
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:FontAwesome Icon="BalanceScale" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                    <Label Content="الوزن" FontSize="18" FontWeight="Bold" Margin="10"/>
+                                        <TextBox x:Name="WeightTextBox" Text="{Binding Weight, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding IsWeightInputEnabled}" Style="{StaticResource ModernTextBoxStyle}" FontSize="18" FontWeight="Bold" Margin="10" Height="40" Width="150" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
+                                </StackPanel>
+                                <!-- Length -->
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:FontAwesome Icon="BalanceScale" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                    <Label Content="الطول" FontSize="18" FontWeight="Bold" Margin="10"/>
+                                        <TextBox x:Name="LengthTextBox" Text="{Binding Length, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding IsLengthInputEnabled}" Style="{StaticResource ModernTextBoxStyle}" FontSize="18" FontWeight="Bold" Margin="10" Height="40" Width="150" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
+                                </StackPanel>
+                                <!-- Height -->
+                                <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
+                                    <fa:FontAwesome Icon="BalanceScale" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                    <Label Content="الارتفاع" FontSize="18" FontWeight="Bold" Margin="10"/>
+                                        <TextBox x:Name="HeightTextBox" Text="{Binding Height, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding IsHeightInputEnabled}" Style="{StaticResource ModernTextBoxStyle}" FontSize="18" FontWeight="Bold" Margin="10" Height="40" Width="150" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
+                                </StackPanel>
+                                <!-- Width -->
+                                <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
+                                    <fa:FontAwesome Icon="BalanceScale" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                    <Label Content="العرض" FontSize="18" FontWeight="Bold" Margin="10"/>
+                                        <TextBox x:Name="WidthTextBox" Text="{Binding Width, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding IsWidthInputEnabled}" Style="{StaticResource ModernTextBoxStyle}" FontSize="18" FontWeight="Bold" Margin="10" Height="40" Width="150" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                                <Grid Margin="10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Production Date -->
+                                    <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="0,0,20,0">
+                                        <fa:FontAwesome Icon="Calendar" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                        <Label Content="تاريخ الانتاج" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Margin="0,10,10,10"/>
+                                        <DatePicker SelectedDate="{Binding ProductionDate, UpdateSourceTrigger=PropertyChanged}" FontSize="18" FontWeight="Bold" Margin="10" Height="40" Width="150" BorderBrush="Black" BorderThickness="1"/>
+                                    </StackPanel>
+
+                                    <!-- Expiry Date -->
+                                    <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                        <fa:FontAwesome Icon="Calendar" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                        <Label Content="تاريخ الصلاحية" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Margin="0,10,10,10"/>
+                                        <DatePicker SelectedDate="{Binding ExpiryDate, UpdateSourceTrigger=PropertyChanged}" FontSize="18" FontWeight="Bold" Margin="10" Height="40" Width="150" BorderBrush="Black" BorderThickness="1"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Product Description -->
+                            <StackPanel Orientation="Horizontal" Margin="10" VerticalAlignment="Center">
+                                <fa:FontAwesome Icon="Info" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="18"/>
+                                <Label Content="وصف السلعة" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Margin="0,10,10,10"/>
+                                    <TextBox x:Name="ProductDescriptionTextBox" Text="{Binding ProductDescription, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontSize="18" FontWeight="Bold" Margin="10" Height="100" Width="800" TextAlignment="Center" AcceptsReturn="True" TextWrapping="Wrap" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsProductDescriptionEnabled}"/>
+                            </StackPanel>
+
+
+                            <!-- New Product Options (Hidden by default) -->
+                            <StackPanel x:Name="NewProductOptionsPanel" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10">
+                                <Label Content="يمكنك إضافة بضاعة جديدة لنفس السلعة من هنا" FontSize="14" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal" Margin="10">
+                                    <Label Content="الكمية"/>
+                                        <TextBox x:Name="NewQuantityTextBox" Text="{Binding NewQuantity, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" IsEnabled="{Binding IsNewQuantityInputEnabled}" FontSize="18" FontWeight="Bold" Margin="10" Height="30" Width="100" BorderBrush="Black" BorderThickness="1"/>
+                                    <Label Content="السعر"/>
+                                        <TextBox x:Name="NewPriceTextBox" Text="{Binding NewPrice, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" IsEnabled="{Binding IsNewPriceInputEnabled}" FontSize="18" FontWeight="Bold" Margin="10" Height="30" Width="100" BorderBrush="Black" BorderThickness="1"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                        </StackPanel>
+                      
+
+
+
+
+                    </StackPanel>
+                    </ScrollViewer>
+
+
+
+                    <StackPanel Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <TabControl
+         
+      Height="100"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Top">
+                            <!-- Tab 1: Search by Barcode -->
+                            <TabItem Header="البحث حسب كود المادة">
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="86.3"/>
+                                        <ColumnDefinition Width="67.2"/>
+                                        <ColumnDefinition Width="236.5"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Search Bar -->
+                                    <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="10,0,10,0" VerticalAlignment="Center" Grid.ColumnSpan="3">
+                                        <TextBox Width="250" Height="30" Name="TXT_Barcode_Search" Padding="5" FontSize="16" BorderBrush="#707070" BorderThickness="1" Text="{Binding BarcodeSearchText}"/>
+                                        <Button Content="بحث" Width="100" Height="30" Margin="10" FontSize="16" Background="#007ACC" Foreground="White" Name="Button_Barcode" Command="{Binding SearchByBarcodeCommand}"/>
+                                    </StackPanel>
+
+                                    <!-- Search Type GroupBox -->
+                                    <GroupBox Header="نوع البحث" Grid.Column="3" Padding="5" BorderBrush="#707070" BorderThickness="1">
+                                        <StackPanel Orientation="Horizontal">
+                                            <RadioButton Margin="10" Content="تطابق القيمة" Name="Radio_B_E" IsChecked="{Binding IsBarcodeExactMatch}" Foreground="#007ACC" />
+                                            <RadioButton Margin="10" Content="اي شيء" Name="Radio_B_L" IsChecked="{Binding IsBarcodeContains}" Foreground="#007ACC" />
+                                        </StackPanel>
+                                    </GroupBox>
+                                </Grid>
+                            </TabItem>
+
+                            <!-- Tab 2: Search by Item Name -->
+                            <TabItem Header="البحث حسب اسم المادة">
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Search Bar -->
+                                    <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="10" VerticalAlignment="Center">
+                                        <TextBox Width="250" Height="30" Name="TXT_Name_Search" Padding="5" FontSize="16" BorderBrush="#707070" BorderThickness="1" Text="{Binding ItemNameSearchText}"/>
+                                        <Button Content="بحث" Width="100" Height="30" Margin="10" FontSize="16" Background="#007ACC" Foreground="White" Name="Button_Name" Command="{Binding SearchByItemNameCommand}"/>
+                                    </StackPanel>
+
+                                    <!-- Search Type GroupBox -->
+                                    <GroupBox Header="نوع البحث" Grid.Column="1"  Padding="5" BorderBrush="#707070" BorderThickness="1">
+                                        <StackPanel Orientation="Horizontal">
+                                            <RadioButton Margin="10" Content="تطابق القيمة" Name="Radio_N_E" IsChecked="{Binding IsItemNameExactMatch}" Foreground="#007ACC" />
+                                            <RadioButton Margin="10" Content="اي شيء" Name="Radio_N_L" IsChecked="{Binding IsItemNameContains}" Foreground="#007ACC" />
+                                        </StackPanel>
+                                    </GroupBox>
+                                </Grid>
+                            </TabItem>
+
+                            <!-- Tab 3: Search by Date Added -->
+                            <TabItem Header="البحث حسب تاريخ الاضافة">
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="6*"/>
+                                        <ColumnDefinition Width="11*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <!-- StackPanel for arranging components horizontally -->
+                                    <StackPanel Orientation="Horizontal" Grid.ColumnSpan="2" >
+                                        <!-- DatePicker for Start Date -->
+                                        <StackPanel>
+                                            <Label Content="تاريخ البدء:" FontWeight="Bold"/>
+                                            <DatePicker Width="200" Height="30" Name="DatePicker_Start" FontSize="16" SelectedDate="{Binding StartDate}"/>
+                                        </StackPanel>
+
+                                        <!-- DatePicker for End Date -->
+                                        <StackPanel Margin="20,0,0,0">
+                                            <Label Content="تاريخ الانتهاء:" FontWeight="Bold"/>
+                                            <DatePicker Width="200" Height="30" Name="DatePicker_End" FontSize="16" SelectedDate="{Binding EndDate}"/>
+                                        </StackPanel>
+
+                                        <!-- Sort Order GroupBox -->
+                                        <GroupBox Header="ترتيب النتائج" Margin="20,0,0,0">
+                                            <StackPanel Orientation="Horizontal">
+                                                <RadioButton Margin="10" Content="تصاعدي" Name="Radio_Ascending" IsChecked="{Binding IsAscending}" Foreground="#007ACC" />
+                                                <RadioButton Margin="10" Content="تنازلي" Name="Radio_Descending" IsChecked="{Binding IsDescending}" Foreground="#007ACC" />
+                                            </StackPanel>
+                                        </GroupBox>
+
+                                        <!-- Search Button -->
+                                        <Button Content="بحث" Width="100" Height="30" Margin="20,0,0,0" FontSize="16" Background="#007ACC" Foreground="White" Name="Button_Search" Command="{Binding SearchByDateAddedCommand}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </TabItem>
+
+                            <!-- Tab 4: Search by Category -->
+                            <TabItem Header="البحث حسب التصنيف">
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Search Bar -->
+                                    <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="10" VerticalAlignment="Center">
+                                        <ComboBox Width="250" Height="30" Name="TXT_Cata_Search" Padding="5" FontSize="16" BorderBrush="#707070" BorderThickness="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}"/>
+                                        <Button Content="بحث" Width="100" Height="30" Margin="10" FontSize="16" Background="#007ACC" Foreground="White" Name="Button_Cata" Command="{Binding SearchByCategoryCommand}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </TabItem>
+
+                            <!-- Tab 5: Sort Expired Items -->
+                            <TabItem Header="فرز المواد المنتهية">
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="83*"/>
+                                        <ColumnDefinition Width="17*"/>
+                                        <ColumnDefinition Width="1226*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <!-- Centered StackPanel for the button -->
+                                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="2" Margin="303,0,0,0">
+                                        <Button Margin="10" Width="500" Height="50" Content="فرز المنتجات تنازليا حسب الكمية المتوفرة" FontSize="20" FontWeight="Bold" Name="Button_Quantity" Command="{Binding SortByQuantityCommand}"
+            Background="#007ACC" Foreground="White" BorderThickness="2" BorderBrush="#007ACC" 
+            Cursor="Hand">
+                                            <Button.Effect>
+                                                <DropShadowEffect ShadowDepth="0" Color="#007ACC" BlurRadius="15"/>
+                                            </Button.Effect>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </TabItem>
+
+                            <!-- Tab 6: Sort by Expiry Date -->
+                            <TabItem Header="فرز حسب تاريخ الصلاحية">
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="283*"/>
+                                        <ColumnDefinition Width="380*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <!-- StackPanel for arranging components horizontally -->
+                                    <StackPanel Orientation="Horizontal" Grid.ColumnSpan="2">
+                                        <!-- DatePicker for Start Date -->
+                                        <StackPanel>
+                                            <Label Content="تاريخ البدء:" FontWeight="Bold"/>
+                                            <DatePicker Width="200" Height="30" Name="DatePicker_Expiry_Start" FontSize="16" SelectedDate="{Binding ExpiryStartDate}"/>
+                                        </StackPanel>
+
+                                        <!-- DatePicker for End Date -->
+                                        <StackPanel Margin="20,0,0,0">
+                                            <Label Content="تاريخ الانتهاء:" FontWeight="Bold"/>
+                                            <DatePicker Width="200" Height="30" Name="DatePicker_Expiry_End" FontSize="16" SelectedDate="{Binding ExpiryEndDate}"/>
+                                        </StackPanel>
+
+                                        <!-- Sort Order GroupBox -->
+                                        <GroupBox Header="ترتيب النتائج" Margin="20,0,0,0">
+                                            <StackPanel Orientation="Horizontal">
+                                                <RadioButton Margin="10" Content="تصاعدي" Name="Radio_Expiry_Ascending" IsChecked="{Binding IsExpiryAscending}" Foreground="#007ACC" />
+                                                <RadioButton Margin="10" Content="تنازلي" Name="Radio_Expiry_Descending" IsChecked="{Binding IsExpiryDescending}" Foreground="#007ACC" />
+                                            </StackPanel>
+                                        </GroupBox>
+
+                                        <!-- Search Button -->
+                                        <Button Content="بحث" Width="100" Height="30" Margin="20,0,0,0" FontSize="16" Background="#007ACC" Foreground="White" Name="Button_Expiry_Search" Command="{Binding SearchByExpiryDateCommand}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </TabItem>
+
+
+                        </TabControl>
+                        <DataGrid
+    Background="White"
+    Name="ProductsList"
+    Margin="10"
+    VerticalAlignment="Stretch"
+    HorizontalAlignment="Stretch"
+    Height="200"
+    SelectionMode="Single"
+    ItemsSource="{Binding ProductsList}"
+    SelectedItem="{Binding SelectedProduct}"
+    AutoGenerateColumns="False"
+    IsReadOnly="True"
+    CanUserAddRows="False"
+    ScrollViewer.CanContentScroll="True"
+    CanUserResizeColumns="False"
+    CanUserResizeRows="False"
+    CanUserReorderColumns="False"
+    SelectionChanged="ProductsList_SelectionChanged"
+>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn  DisplayIndex="0" Header="الرقم" Width="Auto" Visibility="Hidden" />
+                                <DataGridTextColumn  FontSize="24" FontWeight="Bold"  DisplayIndex="1" Header="الاسم" Width="460" Binding="{Binding Name}" >
+                                    <DataGridTextColumn.HeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="HorizontalContentAlignment"
+                                  Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.HeaderStyle>
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="Foreground" Value="{Binding PriceBrush}" />
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Foo}" Value="1">
+                                                    <Setter Property="Foreground" Value="Blue" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding Foo}" Value="2">
+                                                    <Setter Property="Foreground" Value="Red" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding Foo}" Value="2">
+                                                    <Setter Property="Foreground" Value="Yellow" />
+                                                </DataTrigger>
+
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn FontSize="24" FontWeight="Bold" DisplayIndex="2" Header="النوع" Width="150" Binding="{Binding Category.Name}">
+                                    <DataGridTextColumn.HeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="HorizontalContentAlignment"
+                                  Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.HeaderStyle>
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="Foreground" Value="{Binding PriceBrush}" />
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Foo}" Value="1">
+                                                    <Setter Property="Foreground" Value="Blue" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding Foo}" Value="2">
+                                                    <Setter Property="Foreground" Value="Red" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding Foo}" Value="2">
+                                                    <Setter Property="Foreground" Value="Yellow" />
+                                                </DataTrigger>
+
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn FontSize="24" FontWeight="Bold" DisplayIndex="3" Header="الكمية" Width="100" Binding="{Binding Quantity}" >
+                                    <DataGridTextColumn.HeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="HorizontalContentAlignment"
+                                  Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.HeaderStyle>
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="Foreground" Value="Blue" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn FontSize="24" FontWeight="Bold" DisplayIndex="4" Header="التكلفة" Width="100" Binding="{Binding Cost}" >
+                                    <DataGridTextColumn.HeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="HorizontalContentAlignment"
+                                  Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.HeaderStyle>
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="Foreground" Value="Blue" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn FontSize="24" FontWeight="Bold" DisplayIndex="5" Header="سعر البيع" Width="150" Binding="{Binding Price}" >
+                                    <DataGridTextColumn.HeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="HorizontalContentAlignment"
+                                  Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.HeaderStyle>
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="Foreground" Value="{Binding PriceBrush}" />
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Foo}" Value="1">
+                                                    <Setter Property="Foreground" Value="Blue" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding Foo}" Value="2">
+                                                    <Setter Property="Foreground" Value="Red" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding Foo}" Value="2">
+                                                    <Setter Property="Foreground" Value="Yellow" />
+                                                </DataTrigger>
+
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn DisplayIndex="6" Header="الصنف" Width="Auto" Visibility="Hidden" />
+                                <DataGridTextColumn FontSize="24" FontWeight="Bold" DisplayIndex="7" Header="الباركود" Width="200" Binding="{Binding Barcode}" >
+                                    <DataGridTextColumn.HeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="HorizontalContentAlignment"
+                                  Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.HeaderStyle>
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="Foreground" Value="{Binding PriceBrush}" />
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Foo}" Value="1">
+                                                    <Setter Property="Foreground" Value="Blue" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding Foo}" Value="2">
+                                                    <Setter Property="Foreground" Value="Red" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding Foo}" Value="2">
+                                                    <Setter Property="Foreground" Value="Yellow" />
+                                                </DataTrigger>
+
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn DisplayIndex="8" Header="الربح" Width="Auto" Visibility="Hidden" />
+                                <DataGridTextColumn FontSize="24" FontWeight="Bold" DisplayIndex="9" Header="التاريخ" Width="150" Binding="{Binding Datex}" >
+                                    <DataGridTextColumn.HeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="HorizontalContentAlignment"
+                                  Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.HeaderStyle>
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="Foreground" Value="{Binding PriceBrush}" />
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Foo}" Value="1">
+                                                    <Setter Property="Foreground" Value="Blue" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding Foo}" Value="2">
+                                                    <Setter Property="Foreground" Value="Red" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding Foo}" Value="2">
+                                                    <Setter Property="Foreground" Value="Yellow" />
+                                                </DataTrigger>
+
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn DisplayIndex="10" Header="تاريخ الانتهاء" Width="Auto" Visibility="Hidden" />
+                                <DataGridTextColumn FontSize="12" FontWeight="Bold" DisplayIndex="11" Header="الصورة" Width="Auto" Visibility="Hidden" >
+                                    <DataGridTextColumn.HeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="HorizontalContentAlignment"
+                                  Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.HeaderStyle>
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2"
+            Orientation="Vertical"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Name="Menu_2_Panel" Style="{StaticResource Menu_2_Panel_Style}">
+                            <Button Height="40"
+                Background="#007ACC"
+                Foreground="White"
+                FontWeight="Bold"
+                Width="150"
+                Margin="5"
+                Content="حفظ واضافة"
+                Command="{Binding SaveAndAddCommand}"
+                Cursor="Hand"
+                Visibility="{Binding SaveAndAddVisibility}"/>
+                            <Button Height="40"
+                Background="#007ACC"
+                Foreground="White"
+                FontWeight="Bold"
+                Width="150"
+                Margin="5"
+                Content="حفظ وتعديل"
+                Command="{Binding SaveAndEditCommand}"
+                Cursor="Hand"
+                Visibility="{Binding SaveAndEditVisibility}"/>
+                            <Button Height="40"
+                Background="#007ACC"
+                Foreground="White"
+                FontWeight="Bold"
+                Width="150"
+                Margin="5"
+                Content="الغاء"
+                Command="{Binding CancelCommand}"
+                Cursor="Hand"
+                Visibility="{Binding CancelVisibility}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Name="Menu_panel" Style="{StaticResource Menu_panel_Style}">
+                            <Button Height="40"
+                Background="#007ACC"
+                Foreground="White"
+                FontWeight="Bold"
+                Width="150"
+                Margin="5"
+                Content="اضافة منتج جديد"
+                Command="{Binding AddCommand}"
+                Cursor="Hand"
+                Visibility="{Binding AddVisibility}"/>
+                            <Button Height="40"
+                Background="#007ACC"
+                Foreground="White"
+                FontWeight="Bold"
+                Width="150"
+                Margin="5"
+                Content="تعديل"
+                Command="{Binding EditCommand}"
+                Cursor="Hand"
+                Visibility="{Binding EditVisibility}"/>
+                            <Button Height="40"
+                Background="#007ACC"
+                Foreground="White"
+                FontWeight="Bold"
+                Width="150"
+                Margin="5"
+                Content="حذف"
+                Command="{Binding DeleteCommand}"
+                Cursor="Hand"
+                Visibility="{Binding DeleteVisibility}"/>
+                            <Button Height="40"
+                Background="#007ACC"
+                Foreground="White"
+                FontWeight="Bold"
+                Width="150"
+                Margin="5"
+                Content="طباعة"
+                Command="{Binding PrintCommand}"
+                Cursor="Hand"
+                Visibility="{Binding PrintVisibility}"/>
+                            <!--<Button Height="40"
+                Background="#007ACC"
+                Foreground="White"
+                FontWeight="Bold"
+                Width="150"
+                Margin="5"
+                Content="اغلاق"
+                Command="{Binding CloseCommand}"
+                Cursor="Hand"
+                Visibility="{Binding CloseVisibility}"/>-->
+                        </StackPanel>
+                    </StackPanel>
+
+                </Grid>
+            </Border>
+
+
+        </Grid>
+
+    </Border>
 </Window>

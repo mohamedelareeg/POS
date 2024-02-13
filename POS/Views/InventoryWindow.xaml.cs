@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using POS.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace POS.Views
 {
@@ -19,9 +10,29 @@ namespace POS.Views
     /// </summary>
     public partial class InventoryWindow : Window
     {
+        private InventoryViewModel viewModel;
+
         public InventoryWindow()
         {
             InitializeComponent();
+            viewModel = new InventoryViewModel();
+            DataContext = viewModel;
+        }
+        private void Window_Closed(object sender, EventArgs e)
+        {
+
+        }
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox textBox)
+            {
+                BindingOperations.GetBindingExpression(textBox, TextBox.TextProperty).UpdateSource();
+            }
+        }
+
+        private void ProductsList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

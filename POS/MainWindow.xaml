@@ -33,7 +33,7 @@
                          HorizontalAlignment="Center"
                          Margin="5,5,10,0" >
                     <Ellipse.Fill>
-                        <ImageBrush ImageSource="Assets/pic/el-bostan.jpg" Stretch="UniformToFill"/>
+                        <ImageBrush ImageSource="/Assets/pic/arp-tran-removebg-preview.png" Stretch="UniformToFill"/>
                     </Ellipse.Fill>
 
                 </Ellipse>

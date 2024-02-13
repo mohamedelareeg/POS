@@ -9,13 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\key-icon.png" />
     <None Remove="Assets\pic\1041633.png" />
     <None Remove="Assets\pic\38-512.png" />
     <None Remove="Assets\pic\Add-To-Cart-Button-PNG-Pic.png" />
+    <None Remove="Assets\pic\arp-tran-removebg-preview.png" />
+    <None Remove="Assets\pic\avatar1.jpg" />
     <None Remove="Assets\pic\backword.png" />
     <None Remove="Assets\pic\bank.jpg" />
     <None Remove="Assets\pic\buy.jpg" />
     <None Remove="Assets\pic\cart.jpg" />
+    <None Remove="Assets\pic\cartoon-woman-pretty.png" />
     <None Remove="Assets\pic\cell-14-2-480.png" />
     <None Remove="Assets\pic\checkmark-1-1.png" />
     <None Remove="Assets\pic\christmas-date-icon.png" />
@@ -25,23 +29,59 @@
     <None Remove="Assets\pic\el-bostan.jpg" />
     <None Remove="Assets\pic\handshake-651818_960_720.png" />
     <None Remove="Assets\pic\inventory.jpg" />
+    <None Remove="Assets\pic\leaf.jpg" />
     <None Remove="Assets\pic\math_delete.png" />
     <None Remove="Assets\pic\menu.png" />
     <None Remove="Assets\pic\new.png" />
+    <None Remove="Assets\pic\placeholder-image.png" />
     <None Remove="Assets\pic\pos.jpg" />
     <None Remove="Assets\pic\refresh.png" />
     <None Remove="Assets\pic\Sells.jpg" />
     <None Remove="Assets\pic\settings.jpg" />
     <None Remove="Assets\pic\settings.png" />
+    <None Remove="Assets\pic\Upload-PNG-Image-File.png" />
+    <None Remove="Assets\pic\user-icon.png" />
     <None Remove="Assets\pic\wallet.png" />
     <None Remove="Assets\pic\workers.jpg" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
+    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+    <PackageReference Include="MaterialDesignColors" Version="2.1.4" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.9.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\POS.Infrustructure\POS.Infrustructure.csproj" />
+    <ProjectReference Include="..\POS.Persistence\POS.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\pic\avatar1.jpg" />
+    <Resource Include="Assets\pic\cartoon-woman-pretty.png" />
+    <Resource Include="Assets\pic\key-icon.png" />
+    <Resource Include="Assets\pic\arp-tran-removebg-preview.png" />
+    <Resource Include="Assets\pic\leaf.jpg" />
+    <Resource Include="Assets\pic\placeholder-image.png" />
+    <Resource Include="Assets\pic\Upload-PNG-Image-File.png" />
+    <Resource Include="Assets\pic\user-icon.png" />
     <Resource Include="Assets\pic\wallet.png" />
     <Resource Include="Assets\pic\customers.jpg" />
   </ItemGroup>
@@ -71,6 +111,30 @@
     <Resource Include="Assets\pic\settings.jpg" />
     <Resource Include="Assets\pic\settings.png" />
     <Resource Include="Assets\pic\workers.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="CustomControl\Roles_UserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomControl\Backup_UserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomControl\Supplier_Add_UserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomControl\Purchase_Products_UserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomControl\Moving_Products_UserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Dialogs\AddCategoriesDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Dialogs\AddSuppliersDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>

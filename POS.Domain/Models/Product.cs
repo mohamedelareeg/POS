@@ -1,8 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace POS.Models
+namespace POS.Domain.Models
 {
-    public class Product : INotifyPropertyChanged
+    public class Product : BaseEntity
     {
         private int id;
         private string name;
@@ -13,10 +13,15 @@ namespace POS.Models
         private string type;
         private string barcode;
         private double earned;
-        private string datex;
-        private string datee;
+        private string? datex; // Nullable string for datex
+        private string? datee; // Nullable string for datee
         private string _details;
         private string imagePath;
+        private string? color; // Nullable string for color
+        private double? width; // Nullable double for width
+        private double? height; // Nullable double for height
+        private double? length; // Nullable double for length
+        private double? weight; // Nullable double for weight
 
         public Product()
         {
@@ -151,7 +156,7 @@ namespace POS.Models
             }
         }
 
-        public string Datex
+        public string? Datex // Nullable string for datex
         {
             get => datex;
             set
@@ -164,7 +169,7 @@ namespace POS.Models
             }
         }
 
-        public string Datee
+        public string? Datee // Nullable string for datee
         {
             get => datee;
             set
@@ -205,18 +210,7 @@ namespace POS.Models
             }
         }
 
-        public Category Category
-        {
-            get { return category; }
-            set
-            {
-                if (category != value)
-                {
-                    category = value;
-                    NotifyPropertyChanged(nameof(Category));
-                }
-            }
-        }
+
         public string ImagePath
         {
             get { return imagePath; }
@@ -230,11 +224,101 @@ namespace POS.Models
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void NotifyPropertyChanged(string property)
+        public string? Color // Nullable string for color
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+            get => color;
+            set
+            {
+                if (color != value)
+                {
+                    color = value;
+                    NotifyPropertyChanged(nameof(Color));
+                }
+            }
         }
+
+        public double? Width // Nullable double for width
+        {
+            get => width;
+            set
+            {
+                if (width != value)
+                {
+                    width = value;
+                    NotifyPropertyChanged(nameof(Width));
+                }
+            }
+        }
+
+        public double? Height // Nullable double for height
+        {
+            get => height;
+            set
+            {
+                if (height != value)
+                {
+                    height = value;
+                    NotifyPropertyChanged(nameof(Height));
+                }
+            }
+        }
+
+        public double? Length // Nullable double for length
+        {
+            get => length;
+            set
+            {
+                if (length != value)
+                {
+                    length = value;
+                    NotifyPropertyChanged(nameof(Length));
+                }
+            }
+        }
+
+        public double? Weight // Nullable double for weight
+        {
+            get => weight;
+            set
+            {
+                if (weight != value)
+                {
+                    weight = value;
+                    NotifyPropertyChanged(nameof(Weight));
+                }
+            }
+        }
+
+
+        private int categoryId;
+        [ForeignKey(nameof(Category))]
+        public int CategoryId
+        {
+            get => categoryId;
+            set
+            {
+                if (categoryId != value)
+                {
+                    categoryId = value;
+                    NotifyPropertyChanged(nameof(CategoryId));
+                }
+            }
+        }
+
+        // Navigation property for the related category
+        public virtual Category Category
+        {
+            get => category;
+            set
+            {
+                if (category != value)
+                {
+                    category = value;
+                    NotifyPropertyChanged(nameof(Category));
+                }
+            }
+        }
+
+
     }
 }
