@@ -3,12 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                xmlns:control="http://filterdatagrid.control.com/2021"
              xmlns:local="clr-namespace:POS.CustomControl"
                xmlns:fa="http://schemas.fontawesome.io/icons/" 
              mc:Ignorable="d" 
              MinWidth="1366"
              MinHeight="768">
     <UserControl.Resources>
+        <Style x:Key="FilterDatagridStyle" TargetType="{x:Type control:FilterDataGrid}">
+            <Setter Property="Margin" Value="10,0,0,0" />
+            <Setter Property="AlternatingRowBackground" Value="WhiteSmoke" />
+            <Setter Property="AlternationCount" Value="2" />
+            <Setter Property="ColumnWidth" Value="*" />
+            <Setter Property="HorizontalGridLinesBrush" Value="LightGray" />
+            <Setter Property="VerticalGridLinesBrush" Value="LightGray" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Visible" />
+            <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
+            <Setter Property="BorderBrush" Value="LightSlateGray" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="IsReadOnly" Value="True" />
+        </Style>
         <Style x:Key="CustomComboBoxStyle" TargetType="ComboBox">
             <Setter Property="Background" Value="White"/>
             <Setter Property="BorderBrush" Value="{StaticResource PrimaryBlueColor}"/>
@@ -74,12 +88,16 @@
                     </LinearGradientBrush>
                 </Rectangle.Fill>
             </Rectangle>
-            <Border  Grid.Column="0" Grid.RowSpan="3" Margin="10" Background="Transparent" BorderBrush="LightGray" BorderThickness="1">
+            <Border Grid.Column="0" Grid.RowSpan="3" Margin="10" Background="Transparent" BorderBrush="LightGray" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-
-
-                <StackPanel Width="Auto" VerticalAlignment="Top" HorizontalAlignment="Stretch">
-                    <Label Content="ادخل الباركود الخاص بالمنتج"
+                    <!-- Content above the FilterDataGrid -->
+                    <StackPanel Grid.Row="0" Width="Auto" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                        <Label Content="ادخل الباركود الخاص بالمنتج"
     FontSize="16" FontWeight="Bold" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" ></Label>
                     <StackPanel Orientation="Horizontal"
          VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -96,129 +114,147 @@
       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
       Text="{Binding Barcode, Mode=TwoWay}"></TextBox>
 
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                      
-                        <DataGrid Name="CartList" AutoGenerateColumns="False"
-             Background="GhostWhite"
-           
-            Height="Auto"
-            SelectionMode="Single"
-            SelectedItem="{Binding SelectedCartItem}" 
-            ItemsSource="{Binding CartItemsList}"
-            Margin="10,2,10,2"
-            HorizontalAlignment="Stretch" 
-            VerticalAlignment="Stretch"
-            IsReadOnly="True" CanUserAddRows="False"
-            ScrollViewer.CanContentScroll="True"
-            CanUserResizeColumns="False" CanUserResizeRows="False"
-            CanUserReorderColumns="False"
-          >
-
-                            <DataGrid.Columns>
-                                <DataGridTextColumn  DisplayIndex="0" Header="الرقم" Width="Auto" Visibility="Hidden" />
-                                <DataGridTextColumn  FontSize="12"  DisplayIndex="1" Header="الاسم" Width="3*" Binding="{Binding Name}" >
-                                    <DataGridTextColumn.HeaderStyle>
-                                        <Style TargetType="DataGridColumnHeader">
-                                            <Setter Property="HorizontalContentAlignment"
-                  Value="Center" />
-                                        </Style>
-                                    </DataGridTextColumn.HeaderStyle>
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="HorizontalAlignment" Value="Center" />
-                                            <Setter Property="Foreground" Value="{Binding PriceBrush}" />
-
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Foo}" Value="1">
-                                                    <Setter Property="Foreground" Value="Blue" />
-                                                </DataTrigger>
-
-                                                <DataTrigger Binding="{Binding Foo}" Value="2">
-                                                    <Setter Property="Foreground" Value="Red" />
-                                                </DataTrigger>
-
-                                                <DataTrigger Binding="{Binding Foo}" Value="2">
-                                                    <Setter Property="Foreground" Value="Yellow" />
-                                                </DataTrigger>
-
-                                            </Style.Triggers>
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
-                                </DataGridTextColumn>
-                                <DataGridTextColumn DisplayIndex="2" Header="النوع" Width="Auto" Visibility="Hidden" />
-                                <DataGridTextColumn FontSize="12" DisplayIndex="3" Header="الكمية" Width="*" Binding="{Binding Quantity}" >
-                                    <DataGridTextColumn.HeaderStyle>
-                                        <Style TargetType="DataGridColumnHeader">
-                                            <Setter Property="HorizontalContentAlignment"
-                  Value="Center" />
-                                        </Style>
-                                    </DataGridTextColumn.HeaderStyle>
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="HorizontalAlignment" Value="Center" />
-                                            <Setter Property="Foreground" Value="Blue" />
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
-                                </DataGridTextColumn>
-                                <DataGridTextColumn DisplayIndex="4" Header="التكلفة" Width="Auto" Visibility="Hidden" />
-                                <DataGridTextColumn FontSize="12" DisplayIndex="5" Header="سعر الشراء" Width="*" Binding="{Binding Price}" >
-                                    <DataGridTextColumn.HeaderStyle>
-                                        <Style TargetType="DataGridColumnHeader">
-                                            <Setter Property="HorizontalContentAlignment"
-                  Value="Center" />
-                                        </Style>
-                                    </DataGridTextColumn.HeaderStyle>
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="HorizontalAlignment" Value="Center" />
-                                            <Setter Property="Foreground" Value="{Binding PriceBrush}" />
-
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Foo}" Value="1">
-                                                    <Setter Property="Foreground" Value="Blue" />
-                                                </DataTrigger>
-
-                                                <DataTrigger Binding="{Binding Foo}" Value="2">
-                                                    <Setter Property="Foreground" Value="Red" />
-                                                </DataTrigger>
-
-                                                <DataTrigger Binding="{Binding Foo}" Value="2">
-                                                    <Setter Property="Foreground" Value="Yellow" />
-                                                </DataTrigger>
-
-                                            </Style.Triggers>
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
-                                </DataGridTextColumn>
-                                <DataGridTextColumn DisplayIndex="6" Header="الصنف" Width="Auto" Visibility="Hidden" />
-                                <DataGridTextColumn DisplayIndex="7" Header="الوقت" Width="Auto" Visibility="Hidden" />
-                                <DataGridTextColumn DisplayIndex="8" Header="التاريخ" Width="Auto" Visibility="Hidden" />
-                                <DataGridTextColumn DisplayIndex="9" Header="الباركود" Width="Auto"  Visibility="Hidden" />
-                                <DataGridTextColumn DisplayIndex="10" Header="الربح" Width="Auto" Visibility="Hidden" />
-                                <DataGridTextColumn FontSize="10" DisplayIndex="11" Header="ملاحظات" Width="2*"  Binding="{Binding Details}" >
-                                    <DataGridTextColumn.HeaderStyle>
-                                        <Style TargetType="DataGridColumnHeader">
-                                            <Setter Property="HorizontalContentAlignment"
-                  Value="Center" />
-                                        </Style>
-                                    </DataGridTextColumn.HeaderStyle>
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="HorizontalAlignment" Value="Center" />
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
-                                </DataGridTextColumn>
-
-                            </DataGrid.Columns>
-
-                        </DataGrid>
-
-
-
                     </StackPanel>
+                    <Grid Grid.Row="2">
 
-                </StackPanel>
+                       
 
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="2" Margin=" 0 50 0 0">
+                            <control:FilterDataGrid Name="CartList" AutoGenerateColumns="False"
+                 Background="GhostWhite"
+           
+              
+                SelectionMode="Single"
+                SelectedItem="{Binding SelectedCartItem}" 
+                ItemsSource="{Binding CartItemsList}"
+                Margin="10,2,10,2"
+                HorizontalAlignment="Stretch" 
+                VerticalAlignment="Stretch"
+                IsReadOnly="True" CanUserAddRows="False"
+                ScrollViewer.CanContentScroll="True"
+                CanUserResizeColumns="False" CanUserResizeRows="False"
+                CanUserReorderColumns="False"
+                DateFormatString="d"
+                ShowElapsedTime="False"
+                ShowRowsCount="True"
+                ShowStatusBar="True"
+                FilterLanguage="Arabic"
+                Style="{StaticResource FilterDatagridStyle}"
+              >
+
+                                <control:FilterDataGrid.Columns>
+                                    <control:DataGridTextColumn DisplayIndex="0" Header="الرقم" Width="Auto" Visibility="Hidden" />
+                                    <control:DataGridTextColumn IsColumnFiltered="True"  FontSize="10"  DisplayIndex="1" Header="الاسم" Width="3*" Binding="{Binding Product.Name}" >
+                                        <control:DataGridTextColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="HorizontalContentAlignment"
+                      Value="Center" />
+                                            </Style>
+                                        </control:DataGridTextColumn.HeaderStyle>
+                                        <control:DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                                <Setter Property="Foreground" Value="{Binding PriceBrush}" />
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Foo}" Value="1">
+                                                        <Setter Property="Foreground" Value="Blue" />
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding Foo}" Value="2">
+                                                        <Setter Property="Foreground" Value="Red" />
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding Foo}" Value="2">
+                                                        <Setter Property="Foreground" Value="Yellow" />
+                                                    </DataTrigger>
+
+                                                </Style.Triggers>
+                                            </Style>
+                                        </control:DataGridTextColumn.ElementStyle>
+                                    </control:DataGridTextColumn>
+                                    <control:DataGridTextColumn IsColumnFiltered="True" DisplayIndex="2" Header="النوع" Width="Auto" Visibility="Hidden" />
+                                    <control:DataGridTextColumn IsColumnFiltered="True" FontSize="10" DisplayIndex="3" Header="الكمية" Width="*" Binding="{Binding Quantity}" >
+                                        <control:DataGridTextColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="HorizontalContentAlignment"
+                      Value="Center" />
+                                            </Style>
+                                        </control:DataGridTextColumn.HeaderStyle>
+                                        <control:DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                                <Setter Property="Foreground" Value="Blue" />
+                                            </Style>
+                                        </control:DataGridTextColumn.ElementStyle>
+                                    </control:DataGridTextColumn>
+                                    <control:DataGridTextColumn DisplayIndex="4" Header="التكلفة" Width="Auto" Visibility="Hidden" />
+                                    <control:DataGridTextColumn FontSize="10" DisplayIndex="5" Header="سعر" Width="2*" Binding="{Binding PurchasePrice}" >
+                                        <control:DataGridTextColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="HorizontalContentAlignment"
+                      Value="Center" />
+                                            </Style>
+                                        </control:DataGridTextColumn.HeaderStyle>
+                                        <control:DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                                <Setter Property="Foreground" Value="{Binding PriceBrush}" />
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Foo}" Value="1">
+                                                        <Setter Property="Foreground" Value="Blue" />
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding Foo}" Value="2">
+                                                        <Setter Property="Foreground" Value="Red" />
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding Foo}" Value="2">
+                                                        <Setter Property="Foreground" Value="Yellow" />
+                                                    </DataTrigger>
+
+                                                </Style.Triggers>
+                                            </Style>
+                                        </control:DataGridTextColumn.ElementStyle>
+                                    </control:DataGridTextColumn>
+                                    <control:DataGridTextColumn DisplayIndex="6" Header="الصنف" Width="Auto" Visibility="Hidden" />
+                                    <control:DataGridTextColumn DisplayIndex="7" Header="الوقت" Width="Auto" Visibility="Hidden" />
+                                    <control:DataGridTextColumn DisplayIndex="8" Header="التاريخ" Width="Auto" Visibility="Hidden" />
+                                    <control:DataGridTextColumn DisplayIndex="9" Header="الباركود" Width="Auto"  Visibility="Hidden" />
+                                    <control:DataGridTextColumn DisplayIndex="10" Header="الربح" Width="Auto" Visibility="Hidden" />
+                                    <control:DataGridTextColumn FontSize="10"  Header="ملاحظات" Width="2*"  Binding="{Binding Details}" >
+                                        <control:DataGridTextColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="HorizontalContentAlignment"
+                      Value="Center" />
+                                            </Style>
+                                        </control:DataGridTextColumn.HeaderStyle>
+                                        <control:DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                            </Style>
+                                        </control:DataGridTextColumn.ElementStyle>
+                                    </control:DataGridTextColumn>
+                                    <control:DataGridTextColumn FontSize="10" DisplayIndex="11" Header="المخزن" Width="2*" Binding="{Binding Warehouse.Name}" >
+                                        <control:DataGridTextColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="HorizontalContentAlignment"
+    Value="Center" />
+                                            </Style>
+                                        </control:DataGridTextColumn.HeaderStyle>
+                                        <control:DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                            </Style>
+                                        </control:DataGridTextColumn.ElementStyle>
+                                    </control:DataGridTextColumn>
+                                </control:FilterDataGrid.Columns>
+
+                            </control:FilterDataGrid>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
             </Border>
             <Border  Grid.Row="0" Grid.Column="1" Margin="0 10 0 10" Background="Transparent" BorderBrush="LightGray" BorderThickness="1">
                 <Grid >
@@ -365,22 +401,25 @@
                         Background="White">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
                                             <Label Content="{Binding Name}" 
                                Grid.Column="0"
                                Margin="10"
                                FontSize="14" 
                                FontWeight="Bold"
                                Foreground="#333333"/>
-                                            <Label Content="{Binding Price}" 
-                               Grid.Column="1"
-                               Margin="10"
-                               FontSize="14" 
-                               FontWeight="Bold"
-                               Foreground="{Binding PriceBrush, FallbackValue=#333333}"/>
-                                        </Grid>
+                                          
+                                                    <Image Grid.Column="2"
+                                                    Source="{Binding ImagePath}" 
+                                                        Margin="10"
+                                                        Width="75"
+                                                        Height="50"
+                                                        Stretch="Fill"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalAlignment="Center"/>
+                                                </Grid>
                                     </Border>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
@@ -404,7 +443,8 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -414,8 +454,12 @@
 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 
                     <Label Content="{Binding ItemBarcode}" HorizontalContentAlignment="Center" FontSize="10" Margin="1" Foreground="Green" Grid.Row="1"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="15,5,5,0" VerticalAlignment="Center" Grid.Row="2" >
+                               
+                                <Label Content="{Binding ProductWarehouse.Name}" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="10" Foreground="blue"/>
+                            </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Grid.Row="2">
+                            <StackPanel Orientation="Horizontal" Grid.Row="3">
                         <Label Content="الكمية" FontSize="12" FontWeight="Bold" Margin="15,5,5,15"/>
                                 <TextBox Style="{StaticResource ModernTextBoxStyle}" Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" Name="TXT_QUA" Width="100" Height="30" FontSize="18" FontWeight="Bold" Margin="15,5,5,15" TextAlignment="Center"/>
 
@@ -442,21 +486,26 @@ HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                         </ComboBox>
                         <Button Content="+" Width="50"  Height="30" Margin="5,5,5,15" FontSize="16" Foreground="Blue" Background="White" Command="{Binding AddCommand}"/>
                     </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Grid.Row="3">
+                    <StackPanel Orientation="Horizontal" Grid.Row="4">
+                        <Label Content="سعر الوحدة" FontSize="12" Margin="15,5,5,15"/>
+                        <StackPanel>
+                            <TextBox Style="{StaticResource ModernTextBoxStyle}" Text="{Binding UnitPrice, UpdateSourceTrigger=PropertyChanged}"  Width="200" Height="30" FontSize="18" FontWeight="Bold" Margin="0,5,5,15" TextAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Row="5">
                         <Label Content="سعر الشراء" FontSize="12" Margin="15,5,5,15"/>
                         <StackPanel>
-                                    <TextBox Style="{StaticResource ModernTextBoxStyle}" Text="{Binding SalePrice, UpdateSourceTrigger=PropertyChanged}" Name="TXT_Price" Width="200" Height="30" FontSize="18" FontWeight="Bold" Margin="15,5,5,15" TextAlignment="Center"/>
+                                    <TextBox Style="{StaticResource ModernTextBoxStyle}" Text="{Binding PurchasePrice, UpdateSourceTrigger=PropertyChanged}" Name="TXT_Price" Width="200" Height="30" FontSize="18" FontWeight="Bold" Margin="5,5,5,15" TextAlignment="Center"/>
                             <Label Name="Label_Lose" Visibility="Hidden" HorizontalContentAlignment="Center" FontSize="12" FontWeight="Bold" Margin="1" Foreground="Red"/>
                         </StackPanel>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Grid.Row="4">
+                    <StackPanel Orientation="Horizontal" Grid.Row="6">
                         <Label Content="ملاحظات" FontSize="12"  Margin="15,5,5,15"/>
                                 <TextBox Style="{StaticResource ModernTextBoxStyle}" Name="TXT_Details" Width="200" Height="30" FontSize="18" FontWeight="Bold" Margin="15,5,5,15" TextAlignment="Center" Text="{Binding Notes}"/>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Grid.Row="5">
+                    <StackPanel Orientation="Horizontal" Grid.Row="7">
                         <Button Content="موافق [F1]" Width="100" FontWeight="Bold" Height="40" Margin="5,10,10,10" Background="Azure" Foreground="Black" Command="{Binding AcceptCommand}" />
                                 <Button Content="الغاء" Width="100" FontWeight="Bold" Height="40" Margin="5,10,10,10" Background="Transparent" Foreground="Black" Command="{Binding CancelCommand}" />
                         <Button Content="ازالة" Width="100" Foreground="White" FontWeight="Bold" Height="40" Margin="5,10,10,10" Background="Red" Visibility="{Binding DeleteButtonVisibility}" Command="{Binding DeleteCommand}" />
@@ -505,7 +554,7 @@ HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                                 <fa:FontAwesome Icon="List" Margin="0 0 5 0" VerticalAlignment="Center" Foreground="Black"/>
                                 <TextBlock Text="الكمية:" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBox Grid.Column="3" Text="{Binding Quantity}" Style="{StaticResource ModernTextBoxStyle}" IsReadOnly="True" Margin="5"/>
+                            <TextBox Grid.Column="3" Text="{Binding TotalQuantity}" Style="{StaticResource ModernTextBoxStyle}" IsReadOnly="True" Margin="5"/>
 
                           
                         </Grid>
@@ -540,9 +589,7 @@ HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                           
+
                             </Grid.ColumnDefinitions>
 
                             <!-- Total Label -->
@@ -553,100 +600,11 @@ HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 
                             <!-- Total TextBox -->
                             <TextBox Grid.Column="1" Text="{Binding TotalAmount}" Style="{StaticResource ModernTextBoxStyle}" IsReadOnly="True" Margin="5"/>
-                            
-                            <!-- Purchase Invoice Number Label -->
-                            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="5">
-                                <fa:FontAwesome Icon="File" Margin="0 0 5 0" VerticalAlignment="Center" Foreground="Black"/>
-                                <TextBlock Text="رقم فاتورة الشراء:" VerticalAlignment="Center"/>
-                            </StackPanel>
-
-                            <!-- Purchase Invoice Number TextBox -->
-                            <TextBox Grid.Column="3" Text="{Binding PurchaseInvoiceNumber}" Style="{StaticResource ModernTextBoxStyle}" Margin="5"/>
-
-
+                          
 
                         </Grid>
-                        <Grid  Grid.Row="3" Margin="5">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-
-                            <!-- Suppliers Dropdown -->
-                            <TextBlock Grid.Row="0" Text="اختر المورد:" Margin="0,0,0,5"/>
-                            <ComboBox Grid.Row="1" ItemsSource="{Binding Suppliers}" SelectedItem="{Binding SelectedSupplier}" 
-              DisplayMemberPath="Name" SelectedValuePath="Identifier"
-              Style="{StaticResource CustomComboBoxStyle}"/>
-                        </Grid>
-
-                        <Grid  Grid.Row="4" Margin="5">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-
-                            <!-- Warehouses Dropdown -->
-                            <TextBlock Grid.Row="0" Text="اختر المخزن:" Margin="0,0,0,5"/>
-                            <ComboBox Grid.Row="1" ItemsSource="{Binding Warehouses}" SelectedItem="{Binding SelectedWarehouse}" 
-              DisplayMemberPath="Name" SelectedValuePath="Identifier"
-              Style="{StaticResource CustomComboBoxStyle}"/>
-                        </Grid>
-
-                        <Grid Grid.Row="5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-
-                            </Grid.ColumnDefinitions>
-
-
-                            <!-- Payment Button -->
-                            <Button Grid.Column="0" Grid.ColumnSpan="2" Height="30" Margin="5"  Background="Green" Foreground="White" FontWeight="Bold"
-Command="{Binding PaymentCommand}" >
-                                <Button.ContentTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="الدفع" VerticalAlignment="Center"/>
-                                            <fa:FontAwesome Icon="Money" Margin="5 0 0 0"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </Button.ContentTemplate>
-                            </Button>
-
-                        </Grid>
-                        
-                        <Grid Grid.Row="6">
-                            <Grid.ColumnDefinitions>
-                              
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            
-                            <Button Grid.Column="0" Height="30" Margin="5"
-Background="Red" Foreground="White" FontWeight="Bold"
-Command="{Binding SuspendBillCommand}" >
-                                <Button.ContentTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="تعليق الفاتورة" VerticalAlignment="Center"/>
-                                            <fa:FontAwesome Icon="Pause" Margin="5 0 0 0"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </Button.ContentTemplate>
-                            </Button>
-                            <Button Grid.Column="1" Height="30" Margin="5"
-        Background="Gray" Foreground="White" FontWeight="Bold"
-        Command="{Binding CancelBillCommand}" >
-                                <Button.ContentTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="إلغاء الفاتورة" VerticalAlignment="Center"/>
-                                            <fa:FontAwesome Icon="Times" Margin="5 0 0 0"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </Button.ContentTemplate>
-                            </Button>
-                        </Grid>
+                      
+                    
                     </Grid>
 
 
@@ -662,7 +620,144 @@ Command="{Binding SuspendBillCommand}" >
             </Border>
 
             <Border  Grid.Row="3" Grid.Column="1" Margin="0 10 0 10"  Background="Transparent" BorderBrush="LightGray" BorderThickness="1" FlowDirection="RightToLeft">
-            
+                <StackPanel VerticalAlignment="Top" HorizontalAlignment="Stretch">
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                     
+
+
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            
+
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Purchase Invoice Number Label -->
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5">
+                                
+                                <TextBlock  Text="اختر المورد:" Margin="5"/>
+                            </StackPanel>
+                            <ComboBox Grid.Column="1"  ItemsSource="{Binding Suppliers}" SelectedItem="{Binding SelectedSupplier}" 
+DisplayMemberPath="Name" SelectedValuePath="Identifier"
+Style="{StaticResource CustomComboBoxStyle}"/>
+
+                            <!-- Purchase Invoice Number Label -->
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="5">
+                              
+                                <TextBlock Grid.Row="0" Text="اختر المخزن:" Margin="5"/>
+                            </StackPanel>
+                            <ComboBox Grid.Column="3" ItemsSource="{Binding Warehouses}" SelectedItem="{Binding SelectedWarehouse}" 
+DisplayMemberPath="Name" SelectedValuePath="Identifier"
+Style="{StaticResource CustomComboBoxStyle}"/>
+                         
+
+                        </Grid>
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <!-- Payment Button -->
+                            <Button Grid.Column="0" Height="30" Margin="5"  Background="Green" Foreground="White" FontWeight="Bold"
+Command="{Binding PaymentCommand}" >
+                                <Button.ContentTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="الدفع" VerticalAlignment="Center"/>
+                                            <fa:FontAwesome Icon="Money" Margin="5 0 0 0"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </Button.ContentTemplate>
+                            </Button>
+
+
+                            <Button Grid.Column="1" Height="30" Margin="5"
+Background="Red" Foreground="White" FontWeight="Bold"
+Command="{Binding SuspendBillCommand}" >
+                                <Button.ContentTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="تعليق الفاتورة" VerticalAlignment="Center"/>
+                                            <fa:FontAwesome Icon="Pause" Margin="5 0 0 0"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </Button.ContentTemplate>
+                            </Button>
+                            <Button Grid.Column="2" Height="30" Margin="5"
+        Background="Gray" Foreground="White" FontWeight="Bold"
+        Command="{Binding CancelBillCommand}" >
+                                <Button.ContentTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="إلغاء الفاتورة" VerticalAlignment="Center"/>
+                                            <fa:FontAwesome Icon="Times" Margin="5 0 0 0"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </Button.ContentTemplate>
+                            </Button>
+
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Purchase Date Label -->
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5">
+                                <TextBlock Text="تاريخ الشراء:" Margin="5"/>
+                            </StackPanel>
+                            <!-- Purchase Date DatePicker -->
+                            <DatePicker Grid.Column="1" SelectedDate="{Binding PurchaseDate}"  Margin="5"/>
+                            <!-- Payment Date Label -->
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="5">
+                                <TextBlock Text="تاريخ الدفع:" Margin="5"/>
+                            </StackPanel>
+                            <!-- Payment Date DatePicker -->
+                            <DatePicker Grid.Column="3" SelectedDate="{Binding PaymentDate}"  Margin="5"/>
+                            <!-- Purchase Invoice Number Label -->
+                            <StackPanel Grid.Column="4" Orientation="Horizontal" Margin="5">
+                              
+                                <TextBlock Text="رقم فاتورة الشراء:" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <!-- Purchase Invoice Number TextBox -->
+                            <TextBox Grid.Column="5" Text="{Binding PurchaseInvoiceNumber}" Style="{StaticResource ModernTextBoxStyle}" Margin="5"/>
+                        </Grid>
+                        <!-- Buttons Grid -->
+                       
+
+                    </Grid>
+
+
+
+                    <StackPanel>
+
+
+
+
+
+                    </StackPanel>
+                </StackPanel>
             </Border>
         </Grid>
     </Border>

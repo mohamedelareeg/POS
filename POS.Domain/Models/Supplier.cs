@@ -112,6 +112,19 @@
                 }
             }
         }
+        private double _previousBalance;
+        public double PreviousBalance
+        {
+            get => _previousBalance;
+            set
+            {
+                if (_previousBalance != value)
+                {
+                    _previousBalance = value;
+                    NotifyPropertyChanged(nameof(PreviousBalance));
+                }
+            }
+        }
 
     }
 }

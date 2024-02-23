@@ -3,8 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:POS"
               xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+                 xmlns:control="http://filterdatagrid.control.com/2021"
+
              Startup="OnStartup">
     <Application.Resources>
+      
         <ResourceDictionary>
            
          

@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using POS.Domain.Models;
+using POS.Domain.Models.Payments;
+using POS.Domain.Models.Payments.PaymentMethods;
+using POS.Domain.Models.Products;
 using POS.Persistence.Configurations;
 using POS.Persistence.Models;
 
@@ -8,14 +11,43 @@ namespace POS.Persistence.Context
 {
     public class AppDbContext : IdentityDbContext<ApplicationUser>
     {
+
+        public DbSet<CompanyInfo> CompanyInfo { get; set; }
         public DbSet<AuditLogs> AuditLogs { get; set; }
-        public DbSet<CartItem> CartItems { get; set; }
 
         public DbSet<Warehouse> Warehouses { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
+
+        public DbSet<ReadyProduct> ReadyProducts { get; set; }
+        public DbSet<ReadyProductItem> ReadyProductItems { get; set; }
+
+
+        public DbSet<PriceQuotation> PriceQuotations { get; set; }
+        public DbSet<QuotedProduct> QuotedProducts { get; set; }
+
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<InvoicePayment> InvoicePayments { get; set; }
+        public DbSet<SaleProduct> SaleProducts { get; set; }
+
+
+        public DbSet<Purchase> Purchases { get; set; }
+        public DbSet<PurchasePayment> PurchasePayments { get; set; }
+        public DbSet<PurchaseProduct> PurchaseProducts { get; set; }
+
+        public DbSet<Area> Areas { get; set; }
+        public DbSet<Shipping> Shippings { get; set; }
+
+        public DbSet<Expenses> Expenses { get; set; }
+
+
+        public DbSet<Cash> Cashes { get; set; }
+        public DbSet<Bank> Banks { get; set; }
+        public DbSet<CreditCard> CreditCards { get; set; }
+        public DbSet<Cheque> Cheques { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -33,12 +65,19 @@ namespace POS.Persistence.Context
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+
             //modelBuilder.ApplyConfigurationsFromAssembly(typeof(IdentityDbContext).Assembly);
 
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
+
+
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            }
+            base.OnModelCreating(modelBuilder);
         }
         public virtual async Task<int> SaveChangesAsync()
         {

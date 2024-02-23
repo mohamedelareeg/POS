@@ -7,6 +7,7 @@ namespace POS.Persistence.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName => $"{FirstName} {LastName}";
+        public string? DefaultRole { get; set; }
 
         //[EncryptColumn]
         public string? Code { get; set; }

@@ -129,7 +129,7 @@
 
                         <fa:FontAwesome Icon="Building" Margin="10,0,10,0" VerticalAlignment="Center" FontSize="18"/>
                         <Label Content="اسم المخزن" FontSize="18" FontWeight="Bold" Margin="10"/>
-                        <ComboBox ItemsSource="{Binding Warehouses}" SelectedItem="{Binding SelectedWarehouse}" 
+                        <ComboBox ItemsSource="{Binding Warehouses}" SelectedItem="{Binding SelectedWarehouse}"    DisplayMemberPath="Name" 
                       Foreground="Blue"  Height="40" Width="300" FontSize="18" FontWeight="Bold" 
                       BorderBrush="Black" BorderThickness="1"/>
 
@@ -190,7 +190,21 @@
                                         <TextBlock Text="إدارة" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Button>
-                            
+                                <!-- Product Type -->
+                                <StackPanel Grid.Column="6" Orientation="Horizontal" Margin="10,0,0,0">
+                                    <fa:FontAwesome Icon="Tags" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="12"/>
+                                    <Label Content="نوع المنتج" FontSize="12" FontWeight="Bold" Margin="0 15 0 0 "/>
+                                    <ComboBox SelectedItem="{Binding ProductType, Mode=TwoWay}"  FontWeight="Bold" FontSize="12" Margin="10" Height="30" MinWidth="150" BorderBrush="Black" BorderThickness="1">
+                                        <ComboBoxItem Content="بضاعة" Tag="Stock"/>
+                                        <ComboBoxItem Content="خدمة" Tag="Service"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                            </StackPanel>
+                            <!-- Product Name and Category -->
+                            <StackPanel Orientation="Horizontal" Margin="10">
+
+                              
                                 <!-- Unit -->
                                 <Label Content="الفئة / الوحدة" FontSize="12" FontWeight="Bold" Margin="10"/>
                                 <ComboBox x:Name="UnitComboBox" ItemsSource="{Binding Units, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectedItem="{Binding SelectedUnit}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" Width="150" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsUnitsInputEnabled}"/>
@@ -198,66 +212,104 @@
                                 <!-- Color -->
                                 <Label Content="اللون" FontSize="12" FontWeight="Bold" Margin="10"/>
                                 <ComboBox x:Name="ColorComboBox" ItemsSource="{Binding Colors, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectedItem="{Binding SelectedColor}" IsEnabled="{Binding IsColorsInputEnabled}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" Width="150" BorderBrush="Black" BorderThickness="1"/>
+                                <!-- Weight -->
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="الوزن" FontSize="12" FontWeight="Bold" Margin="10 10 0 0"/>
+                                    <TextBox x:Name="WeightTextBox" Text="{Binding Weight, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding IsWeightInputEnabled}" Style="{StaticResource ModernTextBoxStyle}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" Width="100" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
+                                </StackPanel>
+                                <!-- Length -->
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="الطول" FontSize="12" FontWeight="Bold" Margin="0 10 0 0"/>
+                                    <TextBox x:Name="LengthTextBox" Text="{Binding Length, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding IsLengthInputEnabled}" Style="{StaticResource ModernTextBoxStyle}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" Width="100" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
+                                </StackPanel>
+                                <!-- Height -->
+                                <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
+                                    <Label Content="الارتفاع" FontSize="12" FontWeight="Bold" Margin="0 10 0 0"/>
+                                    <TextBox x:Name="HeightTextBox" Text="{Binding Height, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding IsHeightInputEnabled}" Style="{StaticResource ModernTextBoxStyle}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" Width="100" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
+                                </StackPanel>
+                                <!-- Width -->
+                                <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
+                                    <Label Content="العرض" FontSize="12" FontWeight="Bold" Margin="0 10 0 0"/>
+                                    <TextBox x:Name="WidthTextBox" Text="{Binding Width, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding IsWidthInputEnabled}" Style="{StaticResource ModernTextBoxStyle}" FontSize="12" FontWeight="Bold" Margin="10"  Height="30" Width="100" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
+                                </StackPanel>
+
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="10">
+
+
+                             
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,0">
+                                    <fa:FontAwesome Icon="CreditCard" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="12"/>
+                                    <Label Content="سعر البيع" FontSize="12" FontWeight="Bold" Margin="0 15 0 0 "/>
+                                    <TextBox x:Name="RetailPriceTextBox" Text="{Binding RetailPrice, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontWeight="Bold" FontSize="12" Margin="10" Height="30" MinWidth="150" TextAlignment="Center" Background="Azure" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsRetailPriceInputEnabled}"/>
+                                </StackPanel>
+
+                                <!-- Min Sale Price -->
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="10,0,0,0">
+                                    <fa:FontAwesome Icon="Money" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="12"/>
+                                    <Label Content="أدنى سعر للبيع" FontSize="12" FontWeight="Bold" Margin="0 15 0 0 "/>
+                                    <TextBox Text="{Binding MinSalePrice, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontWeight="Bold" FontSize="12" Margin="10" Height="30" MinWidth="150" TextAlignment="Center" Background="Azure" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsMinSalePriceInputEnabled}"/>
+                                </StackPanel>
+
+                                <!-- Profit Margin -->
+                                <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="10,0,0,0">
+                                    <fa:FontAwesome Icon="Percent" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="12"/>
+                                    <Label Content="نسبة الربح" FontSize="12" FontWeight="Bold" Margin="0 15 0 0 "/>
+                                    <TextBox Text="{Binding ProfitMargin, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontWeight="Bold" FontSize="12" Margin="10" Height="30" MinWidth="150" TextAlignment="Center" Background="Azure" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsProfitMarginInputEnabled}"/>
+                                </StackPanel>
+
+                                <!-- Min Stock -->
+                                <StackPanel Grid.Column="4" Orientation="Horizontal" Margin="10,0,0,0">
+                                    <fa:FontAwesome Icon="ShoppingCart" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="12"/>
+                                    <Label Content="الحد الأدنى للمخزون" FontSize="12" FontWeight="Bold" Margin="0 15 0 0 "/>
+                                    <TextBox Text="{Binding MinStock, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontWeight="Bold" FontSize="12" Margin="10" Height="30" MinWidth="150" TextAlignment="Center" Background="Azure" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsMinStockInputEnabled}"/>
+                                </StackPanel>
+
+                                <!-- Quantity -->
+                                <StackPanel Grid.Column="5" Orientation="Horizontal" Margin="10,0,0,0">
+                                    <fa:FontAwesome Icon="Cube" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="12"/>
+                                    <Label Content="الكمية الموجودة بالمخزن" FontSize="12" FontWeight="Bold" Margin="0 15 0 0 "/>
+                                    <TextBox Text="{Binding Quantity, Mode=OneWay}" Style="{StaticResource ModernTextBoxStyle}" FontWeight="Bold" FontSize="12" Margin="10" Height="30" MinWidth="150" TextAlignment="Center" Background="Azure" BorderBrush="Black" BorderThickness="1" IsEnabled="False"/>
+                                </StackPanel>
 
                             </StackPanel>
 
                             <!-- Quantity and Unit and Color -->
                             <StackPanel Orientation="Horizontal" Margin="10">
-                                <!-- Quantity -->
+                              
+                                
+                                <!-- Quantity --><!--
                                 <Label Content="الكمية المتوفرة لديك" FontSize="12" FontWeight="Bold" Margin="10"/>
                                 <TextBox x:Name="QuantityTextBox" Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" Width="150" TextAlignment="Center" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsQuantityInputEnabled}"/>
 
-                                <!-- Wholesale Price -->
+                                --><!-- Wholesale Price --><!--
                                 <StackPanel Grid.Column="0" Orientation="Horizontal">
                                     <fa:FontAwesome Icon="CreditCard" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="12"/>
                                     <Label Content="سعر الجملة" FontSize="12" FontWeight="Bold" Margin="10"/>
                                     <TextBox x:Name="WholesalePriceTextBox" Text="{Binding WholesalePrice, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontWeight="Bold" FontSize="12" Margin="10" Height="30" MinWidth="150" TextAlignment="Center" Background="Azure" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsWholesalePriceInputEnabled}"/>
-                                </StackPanel>
+                                </StackPanel>-->
 
-                                <!-- Retail Price -->
-                                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,0">
-                                    <fa:FontAwesome Icon="CreditCard" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="12"/>
-                                    <Label Content="سعر البيع" FontSize="12" FontWeight="Bold" Margin="10"/>
-                                    <TextBox x:Name="RetailPriceTextBox" Text="{Binding RetailPrice, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontWeight="Bold" FontSize="12" Margin="10" Height="30" MinWidth="150" TextAlignment="Center" Background="Azure" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsRetailPriceInputEnabled}"/>
-                                </StackPanel>
-
-                                <!-- Profit -->
-                                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="10,0,0,0">
-                                    <fa:FontAwesome Icon="LineChart" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="12"/>
-                                    <Label Content="الربح" FontSize="12" FontWeight="Bold" Margin="10"/>
-                                    <TextBox x:Name="ProfitTextBox" Text="{Binding Profit, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontWeight="Bold" FontSize="12" IsReadOnly="True" Margin="10" Height="30" MinWidth="150" TextAlignment="Center" Background="Azure" BorderBrush="Black" BorderThickness="1"/>
-                                </StackPanel>
-                            </StackPanel>
-                            <Grid Margin="10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                        </Grid>
-
-                        <StackPanel Orientation="Horizontal" Margin="10">
-                            <!-- Barcode Section -->
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="رقم الباركود - للتعقب" FontSize="12" FontWeight="Bold" Margin="10"/>
-                                <TextBox x:Name="BarcodeTextBox" Text="{Binding Barcode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" IsEnabled="{Binding IsBarcodeInputEnabled}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" MinWidth="200" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
-                                <Button Style="{StaticResource CustomButtonStyle}"
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="رقم الباركود - للتعقب" FontSize="12" FontWeight="Bold" Margin="5 35 0 0 "/>
+                                    <TextBox x:Name="BarcodeTextBox" Text="{Binding Barcode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" IsEnabled="{Binding IsBarcodeInputEnabled}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" MinWidth="200" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
+                                    <Button Style="{StaticResource CustomButtonStyle}"
            
-            FontSize="12" FontWeight="Bold"
-             Background="SteelBlue"
-            Foreground="White" BorderBrush="Transparent"
-            Command="{Binding GenerateRandomBarcodeCommand}"
-            IsEnabled="{Binding IsGenerateBarcodeButtonEnabled}"
-            HorizontalContentAlignment="Center">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <fa:FontAwesome Icon="Random" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                                        <TextBlock Text="رقم عشوائي"  FontSize="12" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Button>
-                            </StackPanel>
+FontSize="12" FontWeight="Bold"
+ Background="SteelBlue"
+Foreground="White" BorderBrush="Transparent"
+Command="{Binding GenerateRandomBarcodeCommand}"
+IsEnabled="{Binding IsGenerateBarcodeButtonEnabled}"
+HorizontalContentAlignment="Center">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <fa:FontAwesome Icon="Random" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="رقم عشوائي"  FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
 
-                                <!-- Image Section -->
+                                    </Button>
+
+                                    <Image Source="{Binding BarcodeImage}" Width="200" Height="75"/>
+
+                                    <!-- Image Section -->
                                 <StackPanel Orientation="Horizontal" >
                                     <Label Content="صورة السلعة" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" Margin="10 0 0 0"/>
                                     <StackPanel Orientation="Horizontal" Margin="10">
@@ -266,40 +318,45 @@
                                                 <TextBlock Padding="5" Text="تحديد صورة" FontSize="12" FontWeight="Bold" VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </Button>
-                                        <Image x:Name="ProductImage" Source="{Binding ProductImageSource}" Width="30" Height="30" Margin="15,0,0,0"/>
+                                        <Image x:Name="ProductImage" Source="{Binding ProductImageSource}" Width="200" Height="75" Margin="15,0,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
-                                <!-- Weight -->
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Content="الوزن" FontSize="12" FontWeight="Bold" Margin="10"/>
-                                    <TextBox x:Name="WeightTextBox" Text="{Binding Weight, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding IsWeightInputEnabled}" Style="{StaticResource ModernTextBoxStyle}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" Width="100" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
+                                <!-- Profit --><!--
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="10,0,0,0">
+                                    <fa:FontAwesome Icon="LineChart" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="12"/>
+                                    <Label Content="الربح" FontSize="12" FontWeight="Bold" Margin="10"/>
+                                    <TextBox x:Name="ProfitTextBox" Text="{Binding Profit, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontWeight="Bold" FontSize="12" IsReadOnly="True" Margin="10" Height="30" MinWidth="150" TextAlignment="Center" Background="Azure" BorderBrush="Black" BorderThickness="1"/>
+                                </StackPanel>-->
+                                <!-- Barcode Section -->
+                              
                                 </StackPanel>
-                                <!-- Length -->
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Content="الطول" FontSize="12" FontWeight="Bold" Margin="10"/>
-                                    <TextBox x:Name="LengthTextBox" Text="{Binding Length, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding IsLengthInputEnabled}" Style="{StaticResource ModernTextBoxStyle}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" Width="100" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
-                                </StackPanel>
-                                <!-- Height -->
-                                <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
-                                    <Label Content="الارتفاع" FontSize="12" FontWeight="Bold" Margin="10"/>
-                                    <TextBox x:Name="HeightTextBox" Text="{Binding Height, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding IsHeightInputEnabled}" Style="{StaticResource ModernTextBoxStyle}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" Width="100" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
-                                </StackPanel>
-                                <!-- Width -->
-                                <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
-                                    <Label Content="العرض" FontSize="12" FontWeight="Bold" Margin="10"/>
-                                    <TextBox x:Name="WidthTextBox" Text="{Binding Width, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding IsWidthInputEnabled}" Style="{StaticResource ModernTextBoxStyle}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" Width="100" TextAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
+
+                             
+                               
+
+                            </StackPanel>
+                           
+
+                        <StackPanel Orientation="Horizontal" Margin="10">
+                           
+                              
+                             
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="10">
+
+
+                                <!-- Product Description -->
+                                <StackPanel Orientation="Horizontal" Margin="0 10 0 0" VerticalAlignment="Center" Grid.Column="2">
+                                    <Label Content="ملاحظات المنتج" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" Margin="10"/>
+                                    <TextBox x:Name="ProductDescriptionTextBox" Text="{Binding ProductDescription, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontSize="12" FontWeight="Bold" Margin="10" Height="50" Width="800" TextAlignment="Center" AcceptsReturn="True" TextWrapping="Wrap" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsProductDescriptionEnabled}"/>
                                 </StackPanel>
                             </StackPanel>
 
-                            <Grid Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" Margin="10">
 
                                 <!-- Production Date -->
-                                <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="0,0,20,0">
+                                <StackPanel Orientation="Horizontal" Grid.Column="0">
                                     <Label Content="تاريخ الانتاج" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" Margin="10"/>
                                     <DatePicker SelectedDate="{Binding ProductionDate, UpdateSourceTrigger=PropertyChanged}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" Width="100" BorderBrush="Black" BorderThickness="1"/>
                                 </StackPanel>
@@ -309,16 +366,11 @@
                                     <Label Content="تاريخ الصلاحية" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" Margin="10"/>
                                     <DatePicker SelectedDate="{Binding ExpiryDate, UpdateSourceTrigger=PropertyChanged}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" Width="100" BorderBrush="Black" BorderThickness="1"/>
                                 </StackPanel>
-                                <!-- Product Description -->
-                                <StackPanel Orientation="Horizontal" Margin="10" VerticalAlignment="Center" Grid.Column="2">
-                                    <Label Content="وصف السلعة" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" Margin="10"/>
-                                    <TextBox x:Name="ProductDescriptionTextBox" Text="{Binding ProductDescription, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" FontSize="12" FontWeight="Bold" Margin="10" Height="80" Width="400" TextAlignment="Center" AcceptsReturn="True" TextWrapping="Wrap" BorderBrush="Black" BorderThickness="1" IsEnabled="{Binding IsProductDescriptionEnabled}"/>
-                                </StackPanel>
-                            </Grid>
+                             
+                            </StackPanel>
 
-                          
 
-                            <!-- New Product Options (Hidden by default) -->
+                            <!-- New Product Options (Hidden by default) --><!--
                             <StackPanel x:Name="NewProductOptionsPanel" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10">
                                 <Label Content="يمكنك إضافة بضاعة جديدة لنفس السلعة من هنا" FontSize="12" FontWeight="Bold"/>
                                 <StackPanel Orientation="Horizontal" Margin="10">
@@ -327,7 +379,7 @@
                                     <Label Content="السعر"/>
                                     <TextBox x:Name="NewPriceTextBox" Text="{Binding NewPrice, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" IsEnabled="{Binding IsNewPriceInputEnabled}" FontSize="12" FontWeight="Bold" Margin="10" Height="30" Width="100" BorderBrush="Black" BorderThickness="1"/>
                                 </StackPanel>
-                            </StackPanel>
+                            </StackPanel>-->
 
 
                         </StackPanel>
@@ -538,7 +590,7 @@
 >
                     <DataGrid.Columns>
                         <DataGridTextColumn  DisplayIndex="0" Header="الرقم" Width="Auto" Visibility="Hidden" />
-                        <DataGridTextColumn  FontSize="24" FontWeight="Bold"  DisplayIndex="1" Header="الاسم" Width="460" Binding="{Binding Name}" >
+                        <DataGridTextColumn  FontSize="14"   DisplayIndex="1" Header="الاسم" Width="4*" Binding="{Binding Name}" >
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="HorizontalContentAlignment"
@@ -567,7 +619,7 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn FontSize="24" FontWeight="Bold" DisplayIndex="2" Header="النوع" Width="150" Binding="{Binding Category.Name}">
+                        <DataGridTextColumn FontSize="12"  DisplayIndex="2" Header="التصنيف" Width="2*" Binding="{Binding Category.Name}">
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="HorizontalContentAlignment"
@@ -596,7 +648,7 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn FontSize="24" FontWeight="Bold" DisplayIndex="3" Header="الكمية" Width="100" Binding="{Binding Quantity}" >
+                        <DataGridTextColumn FontSize="12"  DisplayIndex="3" Header="الكمية" Width="1*" Binding="{Binding Quantity}" >
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="HorizontalContentAlignment"
@@ -610,7 +662,7 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn FontSize="24" FontWeight="Bold" DisplayIndex="4" Header="التكلفة" Width="100" Binding="{Binding Cost}" >
+                        <DataGridTextColumn FontSize="12"  DisplayIndex="4" Header="التكلفة" Width="1*" Binding="{Binding Cost}" >
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="HorizontalContentAlignment"
@@ -624,7 +676,7 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn FontSize="24" FontWeight="Bold" DisplayIndex="5" Header="سعر البيع" Width="150" Binding="{Binding Price}" >
+                        <DataGridTextColumn FontSize="12"  DisplayIndex="5" Header="سعر البيع" Width="1*" Binding="{Binding Price}" >
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="HorizontalContentAlignment"
@@ -654,7 +706,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTextColumn DisplayIndex="6" Header="الصنف" Width="Auto" Visibility="Hidden" />
-                        <DataGridTextColumn FontSize="24" FontWeight="Bold" DisplayIndex="7" Header="الباركود" Width="200" Binding="{Binding Barcode}" >
+                        <DataGridTextColumn FontSize="12" DisplayIndex="7" Header="الباركود" Width="2*" Binding="{Binding Barcode}" >
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="HorizontalContentAlignment"
@@ -684,7 +736,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTextColumn DisplayIndex="8" Header="الربح" Width="Auto" Visibility="Hidden" />
-                        <DataGridTextColumn FontSize="24" FontWeight="Bold" DisplayIndex="9" Header="التاريخ" Width="150" Binding="{Binding Datex}" >
+                        <DataGridTextColumn FontSize="10"  DisplayIndex="9" Header="التاريخ" Width="2*" Binding="{Binding Datex}" >
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="HorizontalContentAlignment"

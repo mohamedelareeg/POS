@@ -1,0 +1,272 @@
+﻿<UserControl x:Class="POS.CustomControl.Users_UserControl"
+                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:POS.CustomControl"
+               xmlns:fa="http://schemas.fontawesome.io/icons/" 
+                   xmlns:customcontrols="clr-namespace:POS.Components"
+               xmlns:converters="clr-namespace:POS.Validations"
+             mc:Ignorable="d" 
+             MinWidth="800"
+             MinHeight="800">
+    <UserControl.Resources>
+        <converters:StateToReadOnlyConverter x:Key="StateToReadOnlyConverter"/>
+        <converters:StateToEnabledConverter x:Key="StateToEnabledConverter"/>
+        <converters:StateToVisibilityConverter x:Key="StateToVisibilityConverter"/>
+        <Style x:Key="IconButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+
+        <!-- ModernTextBoxStyle -->
+        <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#F7F7F7"/>
+            <Setter Property="BorderBrush" Value="#DDDDDD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="ToolTip" Value="{Binding ErrorMessage}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+          BorderBrush="{TemplateBinding BorderBrush}"
+          BorderThickness="{TemplateBinding BorderThickness}">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                    VerticalAlignment="Center"
+                    Padding="{TemplateBinding Padding}"
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                    Focusable="false"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CustomButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="PART_Border"
+                     Cursor="Hand"
+             Background="{TemplateBinding Background}"
+             BorderBrush="{TemplateBinding BorderBrush}"
+             BorderThickness="{TemplateBinding BorderThickness}"
+                     
+             CornerRadius="{StaticResource AppCornerRadius}" Width="{Binding Width, FallbackValue=auto}" Padding="5, 0" MinWidth="{Binding MinWidth, FallbackValue=100}" Height="35" Margin="5, 0">
+                            <ContentPresenter x:Name="PART_ContentPresenter"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                                   TextElement.FontSize="14"
+                                   TextElement.FontFamily="{StaticResource Montserrat_Semibold}"
+                                   TextElement.FontStretch="Expanded"
+                           TextElement.Foreground="{TemplateBinding Foreground}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="PART_Border" Property="Background" Value="#004FC4" />
+                                <Setter TargetName="PART_ContentPresenter" Property="TextElement.Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="PART_Border" Property="Background" Value="DarkGray" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="PART_Border" Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CustomLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0 10 0 10"/>
+            <Setter Property="FlowDirection" Value="RightToLeft"/>
+        </Style>
+        <Style x:Key="CustomInputStyle" TargetType="TextBox">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="0 0 0 10"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="FlowDirection" Value="LeftToRight"/>
+        </Style>
+        <Style x:Key="CustomDropdownStyle" TargetType="ComboBox">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="0 0 0 10"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="FlowDirection" Value="LeftToRight"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+
+        </Grid.RowDefinitions>
+        <Border  FlowDirection="RightToLeft" Grid.Row="0" Margin="10" CornerRadius="15" Background="White" BorderThickness="2" BorderBrush="{StaticResource PrimaryBackgroundColor}">
+            <StackPanel FlowDirection="RightToLeft">
+                <!-- User Details Fields -->
+                <TextBlock Text="تفاصيل المستخدم" FontSize="16" FontWeight="Bold" Margin="0,10,0,5"/>
+
+                <!-- Username and Email -->
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="اسم المستخدم:" VerticalAlignment="Center"/>
+                    <TextBox Grid.Column="1" Margin="5" Text="{Binding UserName}" Style="{StaticResource ModernTextBoxStyle}" 
+         IsReadOnly="{Binding CurrentState, Converter={StaticResource StateToReadOnlyConverter}}" 
+         IsEnabled="{Binding CurrentState, Converter={StaticResource StateToEnabledConverter}}"/>
+
+                    <TextBlock Grid.Column="2" Text="البريد الإلكتروني:" VerticalAlignment="Center"/>
+                    <TextBox Grid.Column="3" Margin="5" Text="{Binding Email}" Style="{StaticResource ModernTextBoxStyle}" 
+         IsReadOnly="{Binding CurrentState, Converter={StaticResource StateToReadOnlyConverter}}" 
+         IsEnabled="{Binding CurrentState, Converter={StaticResource StateToEnabledConverter}}"/>
+
+                </Grid>
+
+                <!-- First Name and Last Name -->
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="الاسم الأول:" VerticalAlignment="Center"/>
+                    <TextBox Grid.Column="1" Margin="5" Text="{Binding FirstName}" Style="{StaticResource ModernTextBoxStyle}" />
+                    <TextBlock Grid.Column="2" Text="الاسم الأخير:" VerticalAlignment="Center"/>
+                    <TextBox Grid.Column="3" Margin="5" Text="{Binding LastName}" Style="{StaticResource ModernTextBoxStyle}" />
+                </Grid>
+
+                <!-- Phone Number and Password -->
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="رقم الهاتف:" VerticalAlignment="Center"/>
+                    <TextBox Grid.Column="1" Margin="5" Text="{Binding PhoneNumber}" Style="{StaticResource ModernTextBoxStyle}" />
+                    <TextBlock Grid.Column="2" Text="كلمة المرور:"  Visibility="{Binding CurrentState, Converter={StaticResource StateToVisibilityConverter}}" VerticalAlignment="Center"/>
+                    <customcontrols:BindablePasswordBox Grid.Column="3" Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                   Height="28" Margin="5"
+                                   Visibility="{Binding CurrentState, Converter={StaticResource StateToVisibilityConverter}}">
+                    </customcontrols:BindablePasswordBox>
+                </Grid>
+
+                <!-- Role Selection in one row -->
+                <StackPanel Orientation="Horizontal" Margin="0,5">
+                    <TextBlock Text="تعيين الدور:" Width="150" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <ComboBox ItemsSource="{Binding Roles}" SelectedItem="{Binding SelectedRole}" Width="200"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="اضافة" FontSize="16" Width="150" FontWeight="Bold" Background="Green" Margin="10" 
+Foreground="White" Style="{StaticResource CustomButtonStyle}"
+                             Visibility="{Binding CurrentState, Converter={StaticResource StateToVisibilityConverter}}"
+Command="{Binding AddCommand}">
+
+                    </Button>
+                    <StackPanel Orientation="Horizontal" Margin="0 5">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CurrentState}" Value="Modify">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+
+                        <Button Content="تعديل" FontSize="16" Width="150" FontWeight="Bold" Background="Orange" Margin="10" 
+    Foreground="White" Command="{Binding EditCommand}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0 5">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CurrentState}" Value="Modify">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+
+                        <Button Content="إلغاء" FontSize="16" Width="150" FontWeight="Bold" Background="Red" Margin="10" 
+Foreground="White" Command="{Binding CancelCommand}" />
+                    </StackPanel>
+                   
+
+
+                </StackPanel>
+
+            </StackPanel>
+
+        </Border>
+
+        <Border FlowDirection="RightToLeft" Grid.Row="1" Margin="10" CornerRadius="15" Background="#FFFFFF" BorderThickness="2" BorderBrush="#DDDDDD">
+            <!-- DataGrid -->
+            <DataGrid Margin="10"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch"
+          IsReadOnly="True"
+          CanUserAddRows="False"
+          ScrollViewer.CanContentScroll="True"
+          CanUserResizeColumns="False"
+          CanUserResizeRows="False"
+          CanUserReorderColumns="False"
+          SelectionMode="Single"
+          AutoGenerateColumns="False"
+          ItemsSource="{Binding ItemList}"
+          SelectedItem="{Binding SelectedItem}">
+                <DataGrid.Columns>
+                    <!-- Display the name -->
+                    <DataGridTextColumn Header="اسم" Binding="{Binding FullName}" Width="2*"/>
+
+                    <!-- Display the role -->
+                    <DataGridTextColumn Header="الدور" Binding="{Binding DefaultRole}" Width="2*"/>
+
+                    <!-- Edit button column -->
+                    <DataGridTemplateColumn Header="تعديل" Width="1*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                            CommandParameter="{Binding}" Style="{StaticResource IconButton}">
+                                    <fa:FontAwesome Icon="Edit" />
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Delete button column -->
+                    <DataGridTemplateColumn Header="حذف" Width="1*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding DataContext.DeleteItemCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                            CommandParameter="{Binding}" Style="{StaticResource IconButton}">
+                                    <fa:FontAwesome Icon="Trash" />
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+        </Border>
+
+    </Grid>
+
+</UserControl>

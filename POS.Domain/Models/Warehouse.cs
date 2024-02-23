@@ -49,5 +49,11 @@
                 }
             }
         }
+
+        // Navigation property for list of purchases associated with this warehouse
+        public ICollection<Purchase> Purchases { get; set; }
+
+        // Navigation property for list of invoices associated with this warehouse
+        public ICollection<Invoice> Invoices { get; set; }
     }
 }

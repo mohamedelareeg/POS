@@ -171,55 +171,41 @@ namespace POS.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("POS.Domain.Models.CartItem", b =>
+            modelBuilder.Entity("POS.Domain.Models.Area", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Barcode")
+                    b.Property<int>("Capacity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Category")
-                        .IsRequired()
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModifiedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Cost")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("Datex")
-                        .IsRequired()
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("TEXT");
-
-                    b.Property<string>("Details")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("Earned")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Quantity")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("Time")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("Areas");
                 });
 
             modelBuilder.Entity("POS.Domain.Models.Category", b =>
@@ -255,7 +241,7 @@ namespace POS.Persistence.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("POS.Domain.Models.Customer", b =>
+            modelBuilder.Entity("POS.Domain.Models.CompanyInfo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -318,10 +304,473 @@ namespace POS.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.ToTable("CompanyInfo");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Customer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("City")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CommercialRegister")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ContactName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PostalCode")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("PreviousBalance")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("TaxCard")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Website")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("POS.Domain.Models.Product", b =>
+            modelBuilder.Entity("POS.Domain.Models.Invoice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("AreaId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("Discount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("ShippingCost")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int?>("ShippingId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<decimal?>("Tax")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("WarehouseId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AreaId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("ShippingId");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Payments.InvoicePayment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("BankId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("CashId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ChequeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("CreditCardId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("InvoiceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PaymentType")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BankId");
+
+                    b.HasIndex("CashId");
+
+                    b.HasIndex("ChequeId");
+
+                    b.HasIndex("CreditCardId");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.ToTable("InvoicePayments");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Payments.PaymentMethods.Bank", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AccountNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("BankName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Currency")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PersonName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Banks");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Payments.PaymentMethods.Cash", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("CashName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Currency")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cashes");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Payments.PaymentMethods.Cheque", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AccountNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("BankName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Currency")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PersonName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cheques");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Payments.PaymentMethods.CreditCard", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AccountNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("BankName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Currency")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PersonName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CreditCards");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Payments.PurchasePayment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("BankId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("CashId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ChequeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("CreditCardId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PaymentType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PurchaseId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BankId");
+
+                    b.HasIndex("CashId");
+
+                    b.HasIndex("ChequeId");
+
+                    b.HasIndex("CreditCardId");
+
+                    b.HasIndex("PurchaseId");
+
+                    b.ToTable("PurchasePayments");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.PriceQuotation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("Discount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<decimal?>("Tax")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("PriceQuotations");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Products.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -331,14 +780,11 @@ namespace POS.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Color")
                         .HasColumnType("TEXT");
-
-                    b.Property<double>("Cost")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("TEXT");
@@ -356,9 +802,6 @@ namespace POS.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Earned")
-                        .HasColumnType("REAL");
-
                     b.Property<double?>("Height")
                         .HasColumnType("REAL");
 
@@ -367,6 +810,12 @@ namespace POS.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<double?>("Length")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("MinSalePrice")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("MinStock")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ModifiedBy")
@@ -379,10 +828,13 @@ namespace POS.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Price")
+                    b.Property<int>("ProductType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double?>("ProfitMargin")
                         .HasColumnType("REAL");
 
-                    b.Property<double>("Quantity")
+                    b.Property<double>("SalePrice")
                         .HasColumnType("REAL");
 
                     b.Property<string>("Type")
@@ -400,6 +852,309 @@ namespace POS.Persistence.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Products.PurchaseProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Details")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PurchaseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("PurchasePrice")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("REAL");
+
+                    b.Property<int?>("WarehouseId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("PurchaseId");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.ToTable("PurchaseProducts");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Products.QuotedProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Details")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("PriceQuotationId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("REAL");
+
+                    b.Property<int?>("ReadyProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("SalePrice")
+                        .HasColumnType("REAL");
+
+                    b.Property<int?>("WarehouseId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PriceQuotationId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ReadyProductId");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.ToTable("QuotedProducts");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Products.ReadyProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ReadyProducts");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Products.ReadyProductItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ReadyProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ReadyProductId");
+
+                    b.ToTable("ReadyProductItems");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Products.SaleProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Details")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("InvoiceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("REAL");
+
+                    b.Property<int?>("ReadyProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("SalePrice")
+                        .HasColumnType("REAL");
+
+                    b.Property<int?>("WarehouseId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ReadyProductId");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.ToTable("SaleProducts");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Purchase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("Discount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("ShippingCost")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int?>("ShippingId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int?>("SupplierId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal?>("Tax")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int?>("WarehouseId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShippingId");
+
+                    b.HasIndex("SupplierId");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.ToTable("Purchases");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Shipping", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DriverDetails")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Shippings");
                 });
 
             modelBuilder.Entity("POS.Domain.Models.Supplier", b =>
@@ -456,6 +1211,9 @@ namespace POS.Persistence.Migrations
 
                     b.Property<string>("PostalCode")
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("PreviousBalance")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("TaxCard")
                         .HasColumnType("TEXT");
@@ -514,6 +1272,9 @@ namespace POS.Persistence.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DefaultRole")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
@@ -580,7 +1341,8 @@ namespace POS.Persistence.Migrations
                         {
                             Id = "8e445865-a24d-4543-a6c6-9443d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "51cd4980-cdff-445c-a5b0-e0c5dc0d96eb",
+                            ConcurrencyStamp = "dcd6024f-fe95-472a-982d-e06071df2996",
+                            DefaultRole = "Administrator",
                             Email = "admin@arp.com",
                             EmailConfirmed = true,
                             FirstName = "System",
@@ -588,9 +1350,9 @@ namespace POS.Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@ARP.COM",
                             NormalizedUserName = "ADMIN@ARP.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDM1KdyVxeX5RxOQBYhtNCzGXPUdac9J5sZ3WrL6C3FIHXhPb6mkAdyt9Lr+4jFq0g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHsFBoYC1OjlTy3EMnR9xiQB+TrnU9HeuoZ31GQQZTW2KBUOnP/jk8KfVJJNbL/VhA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "909d8a17-15e2-48fb-b8ef-6551273d51fc",
+                            SecurityStamp = "db70b73d-d4bd-4de1-95e5-bae2a3f3ab3c",
                             TwoFactorEnabled = false,
                             UserName = "admin@arp.com"
                         },
@@ -598,7 +1360,7 @@ namespace POS.Persistence.Migrations
                         {
                             Id = "9e224968-33e4-4652-b7b7-8574d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "09a031ff-5bf1-4728-ae16-de28c35203ab",
+                            ConcurrencyStamp = "3d5e8096-5f8a-4799-a39d-2c7cd7a0dc7d",
                             Email = "user@arp.com",
                             EmailConfirmed = true,
                             FirstName = "System",
@@ -606,9 +1368,9 @@ namespace POS.Persistence.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@ARP.COM",
                             NormalizedUserName = "USER@ARP.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELc3ifz5gi3Y7qBgWrDGEdoCtUW8NSYg4KTrkQQQ9qQTje1W8Uv4z/HPTNsfG9HZKQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEjM5C7W9iWZ64QESgYCGDT/n8dUlCyZX6476LyDEcz2ZOsmo0xqcT6CEercmKzzcg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "906cddfb-d931-4819-8233-590a7f4fffb1",
+                            SecurityStamp = "ed2b70b6-0f12-459e-862e-f4a8793037ac",
                             TwoFactorEnabled = false,
                             UserName = "user@arp.com"
                         });
@@ -650,6 +1412,47 @@ namespace POS.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AuditLogs");
+                });
+
+            modelBuilder.Entity("POS.Persistence.Models.Expenses", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("Expenses");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -703,20 +1506,346 @@ namespace POS.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("POS.Domain.Models.Product", b =>
+            modelBuilder.Entity("POS.Domain.Models.Invoice", b =>
+                {
+                    b.HasOne("POS.Domain.Models.Area", "Area")
+                        .WithMany()
+                        .HasForeignKey("AreaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Shipping", "Shipping")
+                        .WithMany("Invoices")
+                        .HasForeignKey("ShippingId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Warehouse", "Warehouse")
+                        .WithMany("Invoices")
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Area");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Shipping");
+
+                    b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Payments.InvoicePayment", b =>
+                {
+                    b.HasOne("POS.Domain.Models.Payments.PaymentMethods.Bank", "Bank")
+                        .WithMany("InvoicePayments")
+                        .HasForeignKey("BankId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Payments.PaymentMethods.Cash", "Cash")
+                        .WithMany("InvoicePayments")
+                        .HasForeignKey("CashId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Payments.PaymentMethods.Cheque", "Cheque")
+                        .WithMany("InvoicePayments")
+                        .HasForeignKey("ChequeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Payments.PaymentMethods.CreditCard", "CreditCard")
+                        .WithMany("InvoicePayments")
+                        .HasForeignKey("CreditCardId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Invoice", "Invoice")
+                        .WithMany("InvoicePayments")
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Bank");
+
+                    b.Navigation("Cash");
+
+                    b.Navigation("Cheque");
+
+                    b.Navigation("CreditCard");
+
+                    b.Navigation("Invoice");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Payments.PurchasePayment", b =>
+                {
+                    b.HasOne("POS.Domain.Models.Payments.PaymentMethods.Bank", null)
+                        .WithMany("PurchasePayments")
+                        .HasForeignKey("BankId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Payments.PaymentMethods.Cash", null)
+                        .WithMany("PurchasePayments")
+                        .HasForeignKey("CashId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Payments.PaymentMethods.Cheque", null)
+                        .WithMany("PurchasePayments")
+                        .HasForeignKey("ChequeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Payments.PaymentMethods.CreditCard", null)
+                        .WithMany("PurchasePayments")
+                        .HasForeignKey("CreditCardId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Purchase", "Purchase")
+                        .WithMany("PurchasePayments")
+                        .HasForeignKey("PurchaseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Purchase");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.PriceQuotation", b =>
+                {
+                    b.HasOne("POS.Domain.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Products.Product", b =>
                 {
                     b.HasOne("POS.Domain.Models.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Products.PurchaseProduct", b =>
+                {
+                    b.HasOne("POS.Domain.Models.Products.Product", "Product")
+                        .WithMany("PurchaseProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("POS.Domain.Models.Purchase", "Purchase")
+                        .WithMany("PurchaseProducts")
+                        .HasForeignKey("PurchaseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("POS.Domain.Models.Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Purchase");
+
+                    b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Products.QuotedProduct", b =>
+                {
+                    b.HasOne("POS.Domain.Models.PriceQuotation", "PriceQuotation")
+                        .WithMany("QuotedProducts")
+                        .HasForeignKey("PriceQuotationId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Products.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Products.ReadyProduct", "ReadyProduct")
+                        .WithMany()
+                        .HasForeignKey("ReadyProductId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("PriceQuotation");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("ReadyProduct");
+
+                    b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Products.ReadyProductItem", b =>
+                {
+                    b.HasOne("POS.Domain.Models.Products.Product", "Product")
+                        .WithMany("ReadyProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("POS.Domain.Models.Products.ReadyProduct", "ReadyProduct")
+                        .WithMany("Products")
+                        .HasForeignKey("ReadyProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("ReadyProduct");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Products.SaleProduct", b =>
+                {
+                    b.HasOne("POS.Domain.Models.Invoice", "Invoice")
+                        .WithMany("SaleProducts")
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Products.Product", "Product")
+                        .WithMany("SaleProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Products.ReadyProduct", "ReadyProduct")
+                        .WithMany("SaleProducts")
+                        .HasForeignKey("ReadyProductId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("ReadyProduct");
+
+                    b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Purchase", b =>
+                {
+                    b.HasOne("POS.Domain.Models.Shipping", "Shipping")
+                        .WithMany()
+                        .HasForeignKey("ShippingId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Supplier", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("POS.Domain.Models.Warehouse", "Warehouse")
+                        .WithMany("Purchases")
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Shipping");
+
+                    b.Navigation("Supplier");
+
+                    b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("POS.Persistence.Models.Expenses", b =>
+                {
+                    b.HasOne("POS.Persistence.Models.ApplicationUser", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("POS.Domain.Models.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Invoice", b =>
+                {
+                    b.Navigation("InvoicePayments");
+
+                    b.Navigation("SaleProducts");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Payments.PaymentMethods.Bank", b =>
+                {
+                    b.Navigation("InvoicePayments");
+
+                    b.Navigation("PurchasePayments");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Payments.PaymentMethods.Cash", b =>
+                {
+                    b.Navigation("InvoicePayments");
+
+                    b.Navigation("PurchasePayments");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Payments.PaymentMethods.Cheque", b =>
+                {
+                    b.Navigation("InvoicePayments");
+
+                    b.Navigation("PurchasePayments");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Payments.PaymentMethods.CreditCard", b =>
+                {
+                    b.Navigation("InvoicePayments");
+
+                    b.Navigation("PurchasePayments");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.PriceQuotation", b =>
+                {
+                    b.Navigation("QuotedProducts");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Products.Product", b =>
+                {
+                    b.Navigation("PurchaseProducts");
+
+                    b.Navigation("ReadyProducts");
+
+                    b.Navigation("SaleProducts");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Products.ReadyProduct", b =>
+                {
+                    b.Navigation("Products");
+
+                    b.Navigation("SaleProducts");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Purchase", b =>
+                {
+                    b.Navigation("PurchasePayments");
+
+                    b.Navigation("PurchaseProducts");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Shipping", b =>
+                {
+                    b.Navigation("Invoices");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Warehouse", b =>
+                {
+                    b.Navigation("Invoices");
+
+                    b.Navigation("Purchases");
                 });
 #pragma warning restore 612, 618
         }

@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets\pic\arp-tran-removebg-preview.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -46,9 +47,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Assets\pic\arp-tran-removebg-preview.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.10" />
     <PackageReference Include="MaterialDesignColors" Version="2.1.4" />
     <PackageReference Include="MaterialDesignThemes" Version="4.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
@@ -66,11 +72,18 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.1" />
+    <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.12" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\POS.Infrustructure\POS.Infrustructure.csproj" />
     <ProjectReference Include="..\POS.Persistence\POS.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FilterDataGrid">
+      <HintPath>Dll\FilterDataGrid.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
@@ -114,6 +127,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="CustomControl\CompanyInfo_UserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomControl\Manufacturing_UserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomControl\SalesHistory_UserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomControl\PriceQuotation_UserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomControl\Users_UserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="CustomControl\Roles_UserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -127,6 +155,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="CustomControl\Moving_Products_UserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Dialogs\ViewEditInvoiceDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Dialogs\AddCategoriesDialog.xaml.cs">

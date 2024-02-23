@@ -18,6 +18,7 @@
         Closed="Window_Closed"
     Loaded="Window_Loaded"
     MinWidth="800"
+        
         >
 
     <Window.Resources>
@@ -109,7 +110,7 @@
                 <RowDefinition Height="30" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <controls:WindowHeader Grid.Row="0" HeaderTitle="الصفحة الرئيسية" />
+            <controls:WindowHeader Grid.Row="0" HeaderTitle="" />
             <Border Grid.Row="1" BorderThickness="2" Margin="10,0,10,0" BorderBrush="LightSlateGray" Background="White">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -135,12 +136,23 @@
                                     <materialDesign:PackIcon Kind="ReorderHorizontal" Foreground="Gray" Width="15" Height="15" />
                                 </StackPanel>
                             </Button>
+
+                            <Grid Grid.Column="1" VerticalAlignment="Top" Margin="0 10 0 0 " 
+               HorizontalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                  
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                            
+
+                                <!-- TextBlock with Name -->
+                                <TextBlock Grid.Column="1" Text="{Binding SelectedItem.Name, ElementName=menuTreeView}" 
+FontWeight="Bold" FontSize="18" Foreground="Black" VerticalAlignment="Top" 
+HorizontalAlignment="Left" />
+                            </Grid>
+
                          
-
-                            <TextBlock Grid.Column="1" Text="{Binding SelectedItem.Name, ElementName=menuTreeView}" 
-               FontWeight="Bold" FontSize="18" Foreground="Black" VerticalAlignment="Top" Margin="0 10 0 0 " 
-               HorizontalAlignment="Center" />
-
                             <!-- Notification and other buttons in the right corner -->
                             <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10 0 10 0" HorizontalAlignment="Right" Orientation="Horizontal">
                                 <!-- Button to show/hide the keyboard -->
@@ -176,7 +188,7 @@
                                     </Button.Triggers>
                                     <Grid>
                                         <materialDesign:PackIcon Kind="BellOutline" Width="30" Height="30" />
-                                        <Ellipse Width="20" Height="20" Fill="Red" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                        <Ellipse Width="20" Height="20" Fill="Red" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 3 0 0">
                                             <Ellipse.RenderTransform>
                                                 <TranslateTransform X="5" Y="-5"/>
                                             </Ellipse.RenderTransform>
@@ -184,7 +196,7 @@
                                                 <DropShadowEffect ShadowDepth="0" BlurRadius="5"/>
                                             </Ellipse.Effect>
                                         </Ellipse>
-                                        <TextBlock x:Name="notificationCount" Text="3" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="notificationCount"  Foreground="White" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10 0 0 0 " Text="3"/>
                                     </Grid>
                                 </Button>
 
@@ -203,7 +215,9 @@
                                         </EventTrigger>
                                     </Button.Triggers>
                                     <StackPanel Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="AccountCircle" Width="30" Height="30" Margin="0 0 10 0"/>
+                                        <Border Width="45" Height="30" CornerRadius="30" Margin="10 1 10 0">
+                                            <Image  RenderOptions.BitmapScalingMode="HighQuality" Width="45" Height="30" Source="/Assets/pic/arp-tran-removebg-preview.png" Stretch="Fill"/>
+                                        </Border>
                                         <TextBlock x:Name="UserName" Text="John Doe" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0 0 5 0"/>
                                     </StackPanel>
                                 </Button>
@@ -216,18 +230,50 @@
                                         <!-- Adjusted CornerRadius -->
                                         <!-- Content of the notification popup -->
                                         <StackPanel Width="250" Margin="10">
-                                            <TextBlock Text="Notifications" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 10"/>
-                                            <ListBox>
+                                            <TextBlock Text="الإشعارات" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 10"/>
+                                            <ListBox BorderBrush="LightGray" BorderThickness="1" Background="#F5F5F5">
+                                                <ListBox.ItemContainerStyle>
+                                                    <Style TargetType="ListBoxItem">
+                                                        <Setter Property="Padding" Value="10"/>
+                                                        <Setter Property="Margin" Value="5"/>
+                                                        <Setter Property="BorderBrush" Value="LightGray"/>
+                                                        <Setter Property="BorderThickness" Value="1"/>
+                                                        <Setter Property="Background" Value="White"/>
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="ListBoxItem">
+                                                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                                                        <ContentPresenter/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </ListBox.ItemContainerStyle>
+
                                                 <ListBoxItem>
-                                                    <TextBlock Text="Notification 1" Margin="5"/>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="تم تحديث النظام إلى أحدث نسخة." Margin="5" FontWeight="Bold" Foreground="DarkRed"/>
+                                                       
+                                                    </StackPanel>
                                                 </ListBoxItem>
+
                                                 <ListBoxItem>
-                                                    <TextBlock Text="Notification 2" Margin="5"/>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="تم تفعيل النظام بنجاح." Margin="5" FontWeight="Bold" Foreground="DarkBlue"/>
+                                                        
+                                                    </StackPanel>
                                                 </ListBoxItem>
+
                                                 <ListBoxItem>
-                                                    <TextBlock Text="Notification 3" Margin="5"/>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="تم إنشاء المتجر بنجاح." Margin="5" FontWeight="Bold" Foreground="DarkGreen"/>
+                                                      
+                                                    </StackPanel>
                                                 </ListBoxItem>
+
                                             </ListBox>
+
                                         </StackPanel>
                                     </Border>
                                 </Popup>
@@ -241,7 +287,10 @@
                                             <!-- Profile Image and Name -->
                                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                                                 <!-- Profile Image -->
-                                                <Ellipse Width="60" Height="60" Fill="LightGray" Margin="0 10"/>
+                                                <Border Width="85" Height="60" Margin="0 10" CornerRadius="30">
+                                                    <Image  RenderOptions.BitmapScalingMode="HighQuality" Width="85" Height="60" Source="/Assets/pic/arp-tran-removebg-preview.png" Stretch="Fill"/>
+                                                </Border>
+
                                                 <!-- Profile Name -->
                                                 <TextBlock x:Name="UserNameDialog" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 10"/>
                                             </StackPanel>
@@ -251,9 +300,9 @@
                                             <!-- Settings and Sign Out Buttons -->
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                                 <!-- Settings Button -->
-                                                <Button  Style="{StaticResource CustomButtonStyle}" Content="Settings" Background="Transparent" BorderBrush="{x:Null}" Foreground="#333333" Margin="5"/>
+                                                <Button  Style="{StaticResource CustomButtonStyle}" Content="الإعدادات" Background="Transparent" BorderBrush="{x:Null}" Foreground="#333333" Margin="5" Click="SettingsBtn_Click"/>
                                                 <!-- Sign Out Button -->
-                                                <Button  Style="{StaticResource CustomButtonStyle}" Content="Sign Out" Background="Transparent" BorderBrush="{x:Null}" Foreground="#E53935" Margin="5"/>
+                                                <Button  Style="{StaticResource CustomButtonStyle}" Content="تسجيل الخروج" Background="Transparent" BorderBrush="{x:Null}" Foreground="#E53935" Margin="5" Click="SignOutBtn_Click"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </Border>

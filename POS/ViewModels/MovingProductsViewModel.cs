@@ -2,14 +2,15 @@
 
 namespace POS.ViewModels
 {
-    public class PurchaseProductsViewModel : BaseProductsViewModel
+    //MovingProductsViewModel
+    public class MovingProductsViewModel : BaseProductsViewModel
     {
 
 
 
 
 
-        public PurchaseProductsViewModel() : base()
+        public MovingProductsViewModel() : base()
         {
 
         }

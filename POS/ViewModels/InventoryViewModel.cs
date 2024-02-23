@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using POS.Dialogs;
 using POS.Domain.Models;
+using POS.Domain.Models.Products;
 using POS.Persistence.Context;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,6 +12,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace POS.ViewModels
 {
@@ -53,6 +55,7 @@ namespace POS.ViewModels
             set
             {
                 _selectedWarehouse = value;
+                SelectedProduct = null;
                 OnPropertyChanged(nameof(SelectedWarehouse));
             }
         }
@@ -96,7 +99,15 @@ namespace POS.ViewModels
 
         private void LoadWarehouses()
         {
-            // Load warehouses from data source or initialize them
+            IQueryable<Warehouse> query = _dbContext.Warehouses; // Initial query
+
+            ObservableCollection<Warehouse> warehouses = new ObservableCollection<Warehouse>(query.ToList());
+
+            Warehouses = warehouses;
+            if (Warehouses != null && Warehouses.Count > 0)
+            {
+                SelectedWarehouse = Warehouses.FirstOrDefault();
+            }
         }
         #endregion
         #region Product Variables 
@@ -151,6 +162,15 @@ namespace POS.ViewModels
                 SelectedProductCategory = selectedProduct.Category; // Assuming Category has a Name property
                 Barcode = selectedProduct.Barcode;
                 ProductDescription = selectedProduct.Details;
+                MinSalePrice = selectedProduct.MinSalePrice;
+                ProfitMargin = selectedProduct.ProfitMargin;
+                MinStock = selectedProduct.MinStock;
+                ProductType = selectedProduct.ProductType;
+                MinSalePrice = selectedProduct.MinSalePrice;
+                MinStock = selectedProduct.MinStock;
+                ProductType = selectedProduct.ProductType;
+                Quantity = (int)selectedProduct.Quantity(SelectedWarehouse.Id);
+
 
                 // Check if the image path is not null or empty
                 if (!string.IsNullOrEmpty(selectedProduct.ImagePath))
@@ -174,12 +194,12 @@ namespace POS.ViewModels
                     ProductImageSource = null;
                 }
 
-                SelectedColor = selectedProduct.Color;
+                SelectedColor = selectedProduct.Color ?? null;
                 Weight = (double)selectedProduct.Weight;
                 Length = (double)selectedProduct.Length;
                 Width = (double)selectedProduct.Width;
                 Height = (double)selectedProduct.Height;
-                Quantity = (int)selectedProduct.Quantity;
+                // Quantity = (int)selectedProduct.Quantity;
                 // Assuming selectedProduct is of type Product
                 DateTime datexDate;
                 if (DateTime.TryParse(selectedProduct.Datex, out datexDate))
@@ -206,6 +226,10 @@ namespace POS.ViewModels
             ProductName = string.Empty;
             //SelectedProductCategory = string.Empty;
             Barcode = string.Empty;
+            MinSalePrice = 0;
+            ProfitMargin = 0;
+            MinStock = 0;
+            ProductType = ProductType.Stock;
             ProductDescription = string.Empty;
             ProductImageSource = null;
             // Clear other properties accordingly...
@@ -503,6 +527,47 @@ namespace POS.ViewModels
             }
         }
 
+
+        private double? _minSalePrice;
+        public double? MinSalePrice
+        {
+            get => _minSalePrice;
+            set
+            {
+                if (_minSalePrice != value)
+                {
+                    _minSalePrice = value;
+                    OnPropertyChanged(nameof(MinSalePrice));
+                }
+            }
+        }
+
+        private double? _profitMargin;
+        public double? ProfitMargin
+        {
+            get => _profitMargin;
+            set
+            {
+                if (_profitMargin != value)
+                {
+                    _profitMargin = value;
+                    OnPropertyChanged(nameof(ProfitMargin));
+                }
+            }
+        }
+        private double? _minStock;
+        public double? MinStock
+        {
+            get => _minStock;
+            set
+            {
+                if (_minStock != value)
+                {
+                    _minStock = value;
+                    OnPropertyChanged(nameof(MinStock));
+                }
+            }
+        }
         private string _barcode;
         public string Barcode
         {
@@ -510,7 +575,54 @@ namespace POS.ViewModels
             set
             {
                 _barcode = value;
+                GenerateBarcodeImage();
                 OnPropertyChanged(nameof(Barcode));
+            }
+        }
+        private BitmapImage _barcodeImage;
+        public BitmapImage BarcodeImage
+        {
+            get => _barcodeImage;
+            set
+            {
+                _barcodeImage = value;
+                OnPropertyChanged(nameof(BarcodeImage));
+            }
+        }
+        private void GenerateBarcodeImage()
+        {
+            if (string.IsNullOrEmpty(Barcode))
+            {
+                // Barcode is null or empty, do not generate the image
+                return;
+            }
+
+            var writer = new ZXing.Windows.Compatibility.BarcodeWriter
+            {
+                Format = ZXing.BarcodeFormat.CODE_128, // Change format if needed
+                Options = new ZXing.Common.EncodingOptions
+                {
+                    Width = 300, // Set image width
+                    Height = 100 // Set image height
+                }
+            };
+
+            Bitmap barcodeBitmap = writer.Write(Barcode);
+            BarcodeImage = ConvertBitmapToBitmapImage(barcodeBitmap);
+        }
+
+        private BitmapImage ConvertBitmapToBitmapImage(Bitmap bitmap)
+        {
+            using (MemoryStream memory = new MemoryStream())
+            {
+                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
+                memory.Position = 0;
+                BitmapImage bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memory;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+                return bitmapImage;
             }
         }
         private DateTime productionDate = DateTime.Today;
@@ -576,17 +688,29 @@ namespace POS.ViewModels
             }
         }
 
-        private double _wholesalePrice;
-        public double WholesalePrice
+        //private double _wholesalePrice;
+        //public double WholesalePrice
+        //{
+        //    get { return _wholesalePrice; }
+        //    set
+        //    {
+        //        _wholesalePrice = value;
+        //        OnPropertyChanged(nameof(WholesalePrice));
+        //    }
+        //}
+        private ProductType _productType;
+        public ProductType ProductType
         {
-            get { return _wholesalePrice; }
+            get => _productType;
             set
             {
-                _wholesalePrice = value;
-                OnPropertyChanged(nameof(WholesalePrice));
+                if (_productType != value)
+                {
+                    _productType = value;
+                    OnPropertyChanged(nameof(ProductType));
+                }
             }
         }
-
         private double _retailPrice;
         public double RetailPrice
         {
@@ -598,16 +722,16 @@ namespace POS.ViewModels
             }
         }
 
-        private double _profit;
-        public double Profit
-        {
-            get { return _profit; }
-            set
-            {
-                _profit = value;
-                OnPropertyChanged(nameof(Profit));
-            }
-        }
+        //private double _profit;
+        //public double Profit
+        //{
+        //    get { return _profit; }
+        //    set
+        //    {
+        //        _profit = value;
+        //        OnPropertyChanged(nameof(Profit));
+        //    }
+        //}
 
         private string _selectedColor;
         public string SelectedColor
@@ -727,8 +851,22 @@ namespace POS.ViewModels
         public ICommand GenerateRandomBarcodeCommand { get; }
         private void GenerateRandomBarcode(object parameter)
         {
-            // Implement logic to generate random barcode
-            Barcode = Guid.NewGuid().ToString();
+            // Generate a random barcode number
+            Random random = new Random();
+            string barcode = random.Next(10000000, 99999999).ToString(); // Generate a random 8-digit number
+
+            // Check if the generated barcode already exists in the database
+            bool isBarcodeUnique = !_dbContext.Products.Any(p => p.Barcode == barcode);
+
+            // Keep generating random barcode until a unique one is found
+            while (!isBarcodeUnique)
+            {
+                barcode = random.Next(10000000, 99999999).ToString();
+                isBarcodeUnique = !_dbContext.Products.Any(p => p.Barcode == barcode);
+            }
+
+            // Set the generated unique barcode
+            Barcode = barcode;
         }
         public ICommand ChooseImageCommand { get; }
         private void ChooseImage(object parameter)
@@ -949,7 +1087,7 @@ namespace POS.ViewModels
         #endregion
         private void SearchByBarcode()
         {
-            IQueryable<Product> query = _dbContext.Products.Include(p => p.Category);
+            IQueryable<Product> query = _dbContext.Products.Include(p => p.SaleProducts).Include(p => p.PurchaseProducts).Include(p => p.Category);
 
             if (!string.IsNullOrEmpty(BarcodeSearchText))
             {
@@ -970,7 +1108,7 @@ namespace POS.ViewModels
 
         private void SearchByItemName()
         {
-            IQueryable<Product> query = _dbContext.Products.Include(p => p.Category);
+            IQueryable<Product> query = _dbContext.Products.Include(p => p.SaleProducts).Include(p => p.PurchaseProducts).Include(p => p.Category);
 
             if (!string.IsNullOrEmpty(ItemNameSearchText))
             {
@@ -991,7 +1129,7 @@ namespace POS.ViewModels
 
         private void SearchByDateAdded()
         {
-            IQueryable<Product> query = _dbContext.Products.Include(p => p.Category);
+            IQueryable<Product> query = _dbContext.Products.Include(p => p.SaleProducts).Include(p => p.PurchaseProducts).Include(p => p.Category);
 
             if (StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
             {
@@ -1005,7 +1143,7 @@ namespace POS.ViewModels
 
         private void SearchByCategory()
         {
-            IQueryable<Product> query = _dbContext.Products.Include(p => p.Category);
+            IQueryable<Product> query = _dbContext.Products.Include(p => p.SaleProducts).Include(p => p.PurchaseProducts).Include(p => p.Category);
 
             if (!string.IsNullOrEmpty(SelectedCategory))
             {
@@ -1019,15 +1157,15 @@ namespace POS.ViewModels
 
         private void SortByQuantity()
         {
-            IQueryable<Product> query = _dbContext.Products.Include(p => p.Category);
+            IQueryable<Product> query = _dbContext.Products.Include(p => p.SaleProducts).Include(p => p.PurchaseProducts).Include(p => p.Category);
 
             if (IsAscending)
             {
-                query = query.OrderBy(p => p.Quantity);
+                query = query.OrderBy(p => p.Quantity(SelectedWarehouse.Id));
             }
             else if (IsDescending)
             {
-                query = query.OrderByDescending(p => p.Quantity);
+                query = query.OrderByDescending(p => p.Quantity(SelectedWarehouse.Id));
             }
 
             ObservableCollection<Product> products = new ObservableCollection<Product>(query.ToList());
@@ -1037,7 +1175,7 @@ namespace POS.ViewModels
 
         private void SearchByExpiryDate()
         {
-            IQueryable<Product> query = _dbContext.Products.Include(p => p.Category);
+            IQueryable<Product> query = _dbContext.Products.Include(p => p.SaleProducts).Include(p => p.PurchaseProducts).Include(p => p.Category);
 
             if (ExpiryStartDate != DateTime.MinValue && ExpiryEndDate != DateTime.MinValue)
             {
@@ -1058,7 +1196,7 @@ namespace POS.ViewModels
 
         private void LoadProductsFromDatabase()
         {
-            IQueryable<Product> query = _dbContext.Products.Include(p => p.Category); // Initial query
+            IQueryable<Product> query = _dbContext.Products.Include(p => p.SaleProducts).Include(p => p.PurchaseProducts).Include(p => p.Category); // Initial query
 
             //// Apply filters based on selected options if they are provided
             //if (!string.IsNullOrEmpty(BarcodeSearchText))
@@ -1255,15 +1393,15 @@ namespace POS.ViewModels
                 missingFields += "فئة المنتج، ";
             }
 
-            if (Quantity <= 0)
-            {
-                missingFields += "الكمية المتوفرة لديك، ";
-            }
+            //if (Quantity <= 0)
+            //{
+            //    missingFields += "الكمية المتوفرة لديك، ";
+            //}
 
-            if (WholesalePrice <= 0)
-            {
-                missingFields += "سعر الجملة، ";
-            }
+            //if (WholesalePrice <= 0)
+            //{
+            //    missingFields += "سعر الجملة، ";
+            //}
 
             if (RetailPrice <= 0)
             {
@@ -1280,10 +1418,10 @@ namespace POS.ViewModels
                 missingFields += "رقم الباركود، ";
             }
 
-            if (Profit < 0)
-            {
-                missingFields += "الربح، ";
-            }
+            //if (Profit < 0)
+            //{
+            //    missingFields += "الربح، ";
+            //}
 
             //if (string.IsNullOrEmpty(ProductionDate.ToString()))
             //{
@@ -1395,11 +1533,11 @@ namespace POS.ViewModels
                 return null;
             }
 
-            if (!Regex.IsMatch(Quantity.ToString(), numericPattern))
-            {
-                MessageBox.Show("الكمية يجب أن تكون قيمة عددية صحيحة.", "خطأ في الإدخال", MessageBoxButton.OK, MessageBoxImage.Error);
-                return null;
-            }
+            //if (!Regex.IsMatch(Quantity.ToString(), numericPattern))
+            //{
+            //    MessageBox.Show("الكمية يجب أن تكون قيمة عددية صحيحة.", "خطأ في الإدخال", MessageBoxButton.OK, MessageBoxImage.Error);
+            //    return null;
+            //}
 
             if (!Regex.IsMatch(RetailPrice.ToString(), numericPattern))
             {
@@ -1407,27 +1545,31 @@ namespace POS.ViewModels
                 return null;
             }
 
-            if (!Regex.IsMatch(WholesalePrice.ToString(), numericPattern))
-            {
-                MessageBox.Show("سعر الجملة يجب أن يكون قيمة عددية.", "خطأ في الإدخال", MessageBoxButton.OK, MessageBoxImage.Error);
-                return null;
-            }
+            //if (!Regex.IsMatch(WholesalePrice.ToString(), numericPattern))
+            //{
+            //    MessageBox.Show("سعر الجملة يجب أن يكون قيمة عددية.", "خطأ في الإدخال", MessageBoxButton.OK, MessageBoxImage.Error);
+            //    return null;
+            //}
 
             Product newProduct = new Product
             {
                 Name = ProductName,
                 CategoryId = SelectedProductCategory.Id,
                 Barcode = Barcode,
+                MinSalePrice = MinSalePrice,
+                ProfitMargin = ProfitMargin,
+                MinStock = MinStock,
+                ProductType = ProductType,
                 Details = ProductDescription,
                 Color = SelectedColor,
                 Weight = Weight,
                 Length = Length,
                 Width = Width,
                 Height = Height,
-                Quantity = Quantity,
-                Price = (double)RetailPrice,
-                Cost = (double)WholesalePrice,
-                Earned = Profit,
+                //Quantity = Quantity,
+                SalePrice = (double)RetailPrice,
+                //Cost = (double)WholesalePrice,
+                //Earned = Profit,
                 Type = SelectedUnit,
                 Datee = ProductionDate.ToString(),
                 Datex = ExpiryDate.ToString()
@@ -1455,20 +1597,26 @@ namespace POS.ViewModels
             {
                 // Update existing product
                 SelectedProduct.Name = newProduct.Name;
-                SelectedProduct.Category = newProduct.Category;
+                SelectedProduct.CategoryId = newProduct.CategoryId;
                 SelectedProduct.Barcode = newProduct.Barcode;
                 SelectedProduct.Details = newProduct.Details;
+                SelectedProduct.MinSalePrice = newProduct.MinSalePrice;
+                SelectedProduct.ProfitMargin = newProduct.ProfitMargin;
+                SelectedProduct.MinStock = newProduct.MinStock;
+                SelectedProduct.ProductType = newProduct.ProductType;
                 SelectedProduct.ImagePath = imagePath; // Update ImagePath with new path
                 SelectedProduct.Color = newProduct.Color;
                 SelectedProduct.Weight = newProduct.Weight;
                 SelectedProduct.Length = newProduct.Length;
                 SelectedProduct.Width = newProduct.Width;
                 SelectedProduct.Height = newProduct.Height;
-                SelectedProduct.Quantity = newProduct.Quantity;
-                SelectedProduct.Price = newProduct.Price;
-                SelectedProduct.Cost = newProduct.Cost;
-                SelectedProduct.Earned = newProduct.Earned;
+                //SelectedProduct.Quantity = newProduct.Quantity;
+                SelectedProduct.SalePrice = newProduct.SalePrice;
+                //SelectedProduct.Cost = newProduct.Cost;
+                //SelectedProduct.Earned = newProduct.Earned;
                 SelectedProduct.Type = newProduct.Type;
+                // Mark the entity as modified
+                _dbContext.Entry(SelectedProduct).State = EntityState.Modified;
 
                 // Save changes to database
                 _dbContext.SaveChanges();
@@ -1705,12 +1853,12 @@ namespace POS.ViewModels
                     Id = i,
                     Name = "Product " + i,
                     Category = new Category { Name = "Category " + (i % 5 + 1) }, // Assuming there are 5 categories
-                    Quantity = i * 2.5, // Some dummy quantity
-                    Cost = i * 1.5,     // Some dummy cost
-                    Price = i * 2,      // Some dummy price
+                    //Quantity = i * 2.5, // Some dummy quantity
+                    //Cost = i * 1.5,     // Some dummy cost
+                    //Price = i * 2,      // Some dummy price
                     Type = "Type " + (i % 3 + 1), // Assuming there are 3 types
                     Barcode = "Barcode " + i,
-                    Earned = i * 0.75, // Some dummy earned amount
+                    //Earned = i * 0.75, // Some dummy earned amount
                     Datex = nextDay.ToShortDateString(), // Set Datex to tomorrow's date
                     Datee = dayAfterNext.ToShortDateString(), // Set Datee to the day after tomorrow's date
                     Details = "Details " + i,

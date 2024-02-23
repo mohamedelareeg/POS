@@ -1,18 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace POS.Domain.Models
+namespace POS.Domain.Models.Products
 {
+    public enum ProductType
+    {
+        Stock,
+        Service
+    }
+
     public class Product : BaseEntity
     {
         private int id;
         private string name;
-        private Category category;
-        private double quantity;
-        private double cost;
-        private double price;
+        private Category? category;
         private string type;
         private string barcode;
-        private double earned;
         private string? datex; // Nullable string for datex
         private string? datee; // Nullable string for datee
         private string _details;
@@ -23,32 +25,46 @@ namespace POS.Domain.Models
         private double? length; // Nullable double for length
         private double? weight; // Nullable double for weight
 
-        public Product()
-        {
-        }
 
-        public Product(int id, Category category, string imagePath)
+        private double _salePrice;
+        public double SalePrice
         {
-            this.id = id;
-            this.category = category;
-            this.imagePath = imagePath;
+            get => _salePrice;
+            set
+            {
+                if (_salePrice != value)
+                {
+                    _salePrice = value;
+                    NotifyPropertyChanged(nameof(SalePrice));
+                }
+            }
         }
+        //public Product()
+        //{
+        //}
 
-        public Product(int id, string name, Category category, double quantity, double cost, double price, string type, string barcode, double earned, string datex, string datee, string imagePath)
-        {
-            this.id = id;
-            this.name = name;
-            this.category = category;
-            this.quantity = quantity;
-            this.cost = cost;
-            this.price = price;
-            this.type = type;
-            this.barcode = barcode;
-            this.earned = earned;
-            this.datex = datex;
-            this.datee = datee;
-            this.imagePath = imagePath;
-        }
+        //public Product(int id, Category category, string imagePath)
+        //{
+        //    this.id = id;
+        //    this.category = category;
+        //    this.imagePath = imagePath;
+        //}
+
+        //public Product(int id, string name, Category category, double quantity, double cost, double price, string type, string barcode, double earned, string datex, string datee, string imagePath)
+        //{
+        //    this.id = id;
+        //    this.name = name;
+        //    this.category = category;
+        //    this.quantity = quantity;
+        //    this.cost = cost;
+        //    this.price = price;
+        //    this.type = type;
+        //    this.barcode = barcode;
+        //    this.earned = earned;
+        //    this.datex = datex;
+        //    this.datee = datee;
+        //    this.imagePath = imagePath;
+        //}
 
         public int Id
         {
@@ -76,46 +92,7 @@ namespace POS.Domain.Models
             }
         }
 
-        public double Quantity
-        {
-            get => quantity;
-            set
-            {
-                if (quantity != value)
-                {
-                    quantity = value;
-                    NotifyPropertyChanged(nameof(Quantity));
-                    NotifyPropertyChanged(nameof(PriceBrush));
-                }
-            }
-        }
 
-        public double Cost
-        {
-            get => cost;
-            set
-            {
-                if (cost != value)
-                {
-                    cost = value;
-                    NotifyPropertyChanged(nameof(Cost));
-                }
-            }
-        }
-
-        public double Price
-        {
-            get { return price; }
-            set
-            {
-                if (price != value)
-                {
-                    price = value;
-                    NotifyPropertyChanged(nameof(Price));
-                    NotifyPropertyChanged(nameof(PriceBrush));
-                }
-            }
-        }
 
         public string Type
         {
@@ -142,20 +119,6 @@ namespace POS.Domain.Models
                 }
             }
         }
-
-        public double Earned
-        {
-            get => earned;
-            set
-            {
-                if (earned != value)
-                {
-                    earned = value;
-                    NotifyPropertyChanged(nameof(Earned));
-                }
-            }
-        }
-
         public string? Datex // Nullable string for datex
         {
             get => datex;
@@ -194,23 +157,6 @@ namespace POS.Domain.Models
                 }
             }
         }
-
-        public string PriceBrush
-        {
-            get
-            {
-                if (Quantity == 0)
-                {
-                    return "Red";
-                }
-                else
-                {
-                    return "Blue";
-                }
-            }
-        }
-
-
         public string ImagePath
         {
             get { return imagePath; }
@@ -290,9 +236,9 @@ namespace POS.Domain.Models
         }
 
 
-        private int categoryId;
+        private int? categoryId;
         [ForeignKey(nameof(Category))]
-        public int CategoryId
+        public int? CategoryId
         {
             get => categoryId;
             set
@@ -306,7 +252,7 @@ namespace POS.Domain.Models
         }
 
         // Navigation property for the related category
-        public virtual Category Category
+        public virtual Category? Category
         {
             get => category;
             set
@@ -317,6 +263,88 @@ namespace POS.Domain.Models
                     NotifyPropertyChanged(nameof(Category));
                 }
             }
+        }
+
+        public ICollection<ReadyProductItem>? ReadyProducts { get; set; }
+
+        public ICollection<SaleProduct>? SaleProducts { get; set; }
+
+
+        // One-to-many relationship with PurchaseProduct
+        public ICollection<PurchaseProduct>? PurchaseProducts { get; set; }
+
+        public ProductType ProductType { get; set; }
+        // Calculated quantity based on sales and purchases
+        public double Quantity(int? warehouseId = null)
+        {
+            if (ProductType == ProductType.Service)
+                return 0;
+
+            // Filter purchase and sale quantities based on the warehouse if provided
+            var purchaseQuantity = PurchaseProducts
+                .Where(p => warehouseId == null || p.WarehouseId == warehouseId)
+                .Sum(p => p.Quantity);
+
+            var saleQuantity = SaleProducts
+                .Where(s => warehouseId == null || s.WarehouseId == warehouseId)
+                .Sum(s => s.Quantity);
+
+            return purchaseQuantity - saleQuantity;
+        }
+        private double? _minSalePrice;
+        public double? MinSalePrice
+        {
+            get => _minSalePrice;
+            set
+            {
+                if (_minSalePrice != value)
+                {
+                    _minSalePrice = value;
+                    NotifyPropertyChanged(nameof(MinSalePrice));
+                }
+            }
+        }
+
+        private double? _profitMargin;
+        public double? ProfitMargin
+        {
+            get => _profitMargin;
+            set
+            {
+                if (_profitMargin != value)
+                {
+                    _profitMargin = value;
+                    NotifyPropertyChanged(nameof(ProfitMargin));
+                }
+            }
+        }
+        private double? _minStock;
+        public double? MinStock
+        {
+            get => _minStock;
+            set
+            {
+                if (_minStock != value)
+                {
+                    _minStock = value;
+                    NotifyPropertyChanged(nameof(MinStock));
+                }
+            }
+        }
+        public double? GetLastPurchasePrice()
+        {
+            // Ensure PurchaseProducts is not null
+            if (PurchaseProducts != null && PurchaseProducts.Any())
+            {
+                // Sort purchase products by purchase date descending
+                var sortedPurchases = PurchaseProducts.OrderByDescending(p => p.Purchase?.Date);
+
+                // Return the purchase price of the first purchase (latest date)
+                return sortedPurchases.FirstOrDefault()?.PurchasePrice;
+            }
+
+            // If PurchaseProducts is null or empty, return null
+            return 0;
         }
 
 

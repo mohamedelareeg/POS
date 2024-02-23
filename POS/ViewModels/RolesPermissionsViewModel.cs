@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Input;
 
 namespace POS.ViewModels
@@ -18,6 +19,69 @@ namespace POS.ViewModels
             {
                 _roles = value;
                 OnPropertyChanged(nameof(Roles));
+            }
+        }
+
+        public enum DialogState
+        {
+            Add,
+            Modify
+        }
+
+        private DialogState _currentState;
+        public DialogState CurrentState
+        {
+            get { return _currentState; }
+            set
+            {
+                if (_currentState != value)
+                {
+                    _currentState = value;
+                    OnPropertyChanged(nameof(CurrentState));
+                }
+            }
+        }
+
+        private string _selectedItem;
+        public string SelectedItem
+        {
+            get { return _selectedItem; }
+            set
+            {
+                if (_selectedItem != value)
+                {
+                    _selectedItem = value;
+                    OnPropertyChanged(nameof(SelectedItem));
+
+                    if (_selectedItem != null)
+                    {
+                        CurrentState = DialogState.Modify;
+
+                        Name = SelectedItem;
+
+                    }
+                    else
+                    {
+                        // Clear the properties when no item is selected
+                        Name = string.Empty;
+
+                        CurrentState = DialogState.Add;
+                    }
+                }
+            }
+        }
+        // Properties
+        private string _name;
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                if (_name != value)
+                {
+                    _name = value;
+                    OnPropertyChanged(nameof(Name));
+                }
             }
         }
         private ObservableCollection<Permission> _permissions;
@@ -65,15 +129,139 @@ namespace POS.ViewModels
             }
         }
 
-
+        public ICommand AddCommand { get; private set; }
+        public ICommand EditCommand { get; private set; }
+        public ICommand EditItemCommand { get; private set; }
+        public ICommand DeleteItemCommand { get; private set; }
+        public ICommand FinishCommand { get; private set; }
         public ICommand SavePermissionsCommand { get; }
         public RolesPermissionsViewModel()
         {
+            AddCommand = new RelayCommand(Add);
+            EditCommand = new RelayCommand(Edit);
+            EditItemCommand = new RelayCommand(EditItem);
+            DeleteItemCommand = new RelayCommand(DeleteItem);
+            FinishCommand = new RelayCommand(Finish);
             // Initialize Roles and Permissions
             InitializeDataAsync();
 
             // Initialize the command
             SavePermissionsCommand = new RelayCommand(SavePermissions);
+        }
+        private void Add(object parameter)
+        {
+            CurrentState = DialogState.Add;
+
+            if (string.IsNullOrWhiteSpace(Name))
+            {
+                MessageBox.Show("يرجى توفير اسم.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // Check if the role already exists
+            if (authenticationService.RoleExists(Name).Result)
+            {
+                MessageBox.Show("اسم موجود بالفعل.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // Add the new role
+            var result = authenticationService.AddRoleAsync(Name).Result;
+
+            if (result.Succeeded)
+            {
+                // Notify the user about successful role creation
+                MessageBox.Show("تمت إضافة الدور بنجاح.", "نجاح", MessageBoxButton.OK, MessageBoxImage.Information);
+                // Reload roles
+                InitializeDataAsync();
+            }
+            else
+            {
+                // Notify the user about role creation failure
+                MessageBox.Show("فشلت عملية إضافة الدور.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            // Clear the input fields
+            Name = string.Empty;
+        }
+
+        private void Edit(object parameter)
+        {
+            if (SelectedItem != null)
+            {
+                if (string.IsNullOrWhiteSpace(Name))
+                {
+                    MessageBox.Show("يرجى توفير اسم.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // Check if the new role name is the same as the selected role name
+                if (SelectedItem == Name)
+                {
+                    MessageBox.Show("اسم موجود بالفعل.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // Edit the role name
+                var result = authenticationService.EditRoleNameAsync(SelectedItem, Name).Result;
+
+                if (result.Succeeded)
+                {
+                    // Notify the user about successful role name edit
+                    MessageBox.Show("تم تعديل اسم الدور بنجاح.", "نجاح", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Reload roles
+                    InitializeDataAsync();
+                }
+                else
+                {
+                    // Notify the user about role name edit failure
+                    MessageBox.Show("فشلت عملية تعديل اسم الدور.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void DeleteItem(object parameter)
+        {
+            if (SelectedItem != null)
+            {
+                MessageBoxResult result = MessageBox.Show("هل أنت متأكد من رغبتك في الحذف ؟", "تأكيد الحذف", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    // Delete the role
+                    var deleteResult = authenticationService.DeleteRoleAsync(SelectedItem).Result;
+
+                    if (deleteResult.Succeeded)
+                    {
+                        // Notify the user about successful role deletion
+                        MessageBox.Show("تم حذف الدور بنجاح.", "نجاح", MessageBoxButton.OK, MessageBoxImage.Information);
+                        // Reload roles
+                        InitializeDataAsync();
+                    }
+                    else
+                    {
+                        // Notify the user about role deletion failure
+                        MessageBox.Show("فشلت عملية حذف الدور.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+        }
+
+        private void EditItem(object parameter)
+        {
+            if (SelectedItem != null)
+            {
+                CurrentState = DialogState.Modify;
+                Name = SelectedItem;
+
+            }
+        }
+
+
+        private void Finish(object parameter)
+        {
+            //Result = true;
+            System.Windows.Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive)?.Close();
         }
         private async void SavePermissions(object obj)
         {

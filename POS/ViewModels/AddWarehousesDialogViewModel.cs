@@ -4,6 +4,9 @@ using POS.Persistence.Context;
 using POS.ViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
@@ -176,7 +179,7 @@ namespace POS.Dialogs.ViewModels
             {
                 Name = Name,
                 Location = Location,
-                Image = ImageSource
+                Image = SaveImage(ImageSource)
             };
 
             // Add the new warehouse to the DbContext
@@ -216,7 +219,7 @@ namespace POS.Dialogs.ViewModels
                 // Update the warehouse properties
                 warehouseToUpdate.Name = Name;
                 warehouseToUpdate.Location = Location;
-                warehouseToUpdate.Image = ImageSource;
+                warehouseToUpdate.Image = SaveImage(ImageSource);
 
                 // Save changes to the database
                 _dbContext.SaveChanges();
@@ -224,9 +227,56 @@ namespace POS.Dialogs.ViewModels
                 // Update the ObservableCollection
                 SelectedItem.Name = Name;
                 SelectedItem.Location = Location;
-                SelectedItem.Image = ImageSource;
+                //SelectedItem.Image = ImageSource;
             }
         }
+        public string SaveImage(string imagePath)
+        {
+            if (string.IsNullOrEmpty(imagePath))
+            {
+                // Return empty string
+                return string.Empty;
+            }
+
+            string uniqueFileName = null;
+            try
+            {
+                uniqueFileName = $"{Guid.NewGuid()}.jpeg";
+                string directoryPath = Path.Combine(Environment.CurrentDirectory, "images", "Warhouses");
+                string destinationImagePath = Path.Combine(directoryPath, uniqueFileName);
+
+                // Create the directory if it does not exist
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                using (var stream = File.OpenRead(imagePath))
+                {
+                    using (var image = Image.FromStream(stream))
+                    {
+                        // Convert the image to Bitmap
+                        Bitmap bitmap = new Bitmap(image);
+
+                        // Compress the image and save it to the specified path
+                        bitmap.Save(destinationImagePath, ImageFormat.Jpeg);
+
+                        // Return the unique filename
+                        return destinationImagePath;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that occur during image processing or saving
+                Console.WriteLine($"Error: {ex.Message}");
+                // Optionally, log the error
+
+                // Return null indicating failure to save the image
+                return null;
+            }
+        }
+
 
         private void DeleteItem(object parameter)
         {

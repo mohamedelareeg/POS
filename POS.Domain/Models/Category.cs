@@ -1,4 +1,6 @@
-﻿namespace POS.Domain.Models
+﻿using POS.Domain.Models.Products;
+
+namespace POS.Domain.Models
 {
     public class Category : BaseEntity
     {

@@ -20,6 +20,7 @@ namespace POS.Persistence.Configurations
                      LastName = "Admin",
                      UserName = "admin@arp.com", // Updated username here
                      NormalizedUserName = "ADMIN@ARP.COM", // Updated normalized username here
+                     DefaultRole = "Administrator",
                      PasswordHash = hasher.HashPassword(null, "123"),
                      EmailConfirmed = true
                  },

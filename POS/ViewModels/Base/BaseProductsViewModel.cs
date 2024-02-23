@@ -1,8 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using POS.Domain.Models;
+using POS.Domain.Models.Products;
+using POS.Persistence.Context;
 using POS.Persistence.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -12,14 +16,103 @@ namespace POS.ViewModels.Base
     public class BaseProductsViewModel : INotifyPropertyChanged
     {
         #region CartList Events
-        public ICommand CartList_CurrentCellChangedCommand { get; }
-        public ICommand CartList_SelectionChangedCommand { get; }
-        public ICommand CartList_MouseDownCommand { get; }
-        public ICommand CartList_MouseDoubleClickCommand { get; }
-        public ICommand CartList_DataContextChangedCommand { get; }
-        public ICommand CartList_SelectedCellsChangedCommand { get; }
+        public ICommand CartList_CurrentCellChangedCommand { get; set; }
+        public ICommand CartList_SelectionChangedCommand { get; set; }
+        public ICommand CartList_MouseDownCommand { get; set; }
+        public ICommand CartList_MouseDoubleClickCommand { get; set; }
+        public ICommand CartList_DataContextChangedCommand { get; set; }
+        public ICommand CartList_SelectedCellsChangedCommand { get; set; }
         #endregion
+        private double _subTotal;
+        public double SubTotal
+        {
+            get => _subTotal;
+            set
+            {
+                if (_subTotal != value)
+                {
+                    _subTotal = value;
+                    OnPropertyChanged(nameof(SubTotal));
+                }
+            }
+        }
+        private double _discount;
+        public double Discount
+        {
+            get => _discount;
+            set
+            {
+                if (_discount != value)
+                {
+                    _discount = value;
+                    OnPropertyChanged(nameof(Discount));
+                }
+            }
+        }
 
+        private double _tax;
+        public double Tax
+        {
+            get => _tax;
+            set
+            {
+
+                if (_tax != value)
+                {
+
+                    _tax = value;
+                    OnPropertyChanged(nameof(Tax));
+                }
+            }
+        }
+
+
+        #region ReadyProduct Section
+        private ObservableCollection<ReadyProduct> readyProductsList;
+        public ObservableCollection<ReadyProduct> ReadyProductsList
+        {
+            get { return readyProductsList; }
+            set
+            {
+                readyProductsList = value;
+                OnPropertyChanged(nameof(ReadyProductsList));
+            }
+        }
+
+
+        private ReadyProduct selectedReadyProduct;
+        public ReadyProduct SelectedReadyProduct
+        {
+            get { return selectedReadyProduct; }
+            set
+            {
+                selectedReadyProduct = value;
+                OnPropertyChanged(nameof(SelectedReadyProduct));
+            }
+        }
+
+        private string _productName;
+        public string ProductName
+        {
+            get => _productName;
+            set
+            {
+                _productName = value;
+                OnPropertyChanged(nameof(ProductName));
+            }
+        }
+
+        private decimal _productSalePrice;
+        public decimal ProductSalePrice
+        {
+            get => _productSalePrice;
+            set
+            {
+                _productSalePrice = value;
+                OnPropertyChanged(nameof(ProductSalePrice));
+            }
+        }
+        #endregion
         private ObservableCollection<ApplicationUser> _employees;
         public ObservableCollection<ApplicationUser> Employees
         {
@@ -47,6 +140,28 @@ namespace POS.ViewModels.Base
             set { _selectedSupplier = value; OnPropertyChanged(nameof(SelectedSupplier)); }
         }
 
+        private ObservableCollection<Customer> _customers;
+        public ObservableCollection<Customer> Customers
+        {
+            get { return _customers; }
+            set
+            {
+                _customers = value;
+                OnPropertyChanged(nameof(Customers));
+            }
+        }
+
+        private Customer _selectedCustomer;
+        public Customer SelectedCustomer
+        {
+            get { return _selectedCustomer; }
+            set
+            {
+                _selectedCustomer = value;
+                OnPropertyChanged(nameof(SelectedCustomer));
+            }
+        }
+
         // Properties for warehouses
         private ObservableCollection<Warehouse> _warehouses;
         public ObservableCollection<Warehouse> Warehouses
@@ -54,12 +169,38 @@ namespace POS.ViewModels.Base
             get { return _warehouses; }
             set { _warehouses = value; OnPropertyChanged(nameof(Warehouses)); }
         }
+        private Warehouse _productWarehouse;
+        public Warehouse ProductWarehouse
+        {
+            get { return _productWarehouse; }
+            set
+            {
+                _productWarehouse = value;
 
+                OnPropertyChanged(nameof(ProductWarehouse));
+            }
+        }
         private Warehouse _selectedWarehouse;
         public Warehouse SelectedWarehouse
         {
             get { return _selectedWarehouse; }
-            set { _selectedWarehouse = value; OnPropertyChanged(nameof(SelectedWarehouse)); }
+            set
+            {
+                _selectedWarehouse = value;
+                LoadCategoriesWithProducts();
+                SelectedProduct = null;
+                //SelectedCategory = CategoryList.FirstOrDefault(category => category.Name == selectedCartItem.Category);
+
+                ItemName = "برجاء اختيار منتج";
+                ItemBarcode = "0";
+                Quantity = 0;
+                SalePrice = 0;
+                Notes = string.Empty;
+                SelectedReadyProduct = null;
+                RemainingQuantity = 0;
+                ProductWarehouse = null;
+                OnPropertyChanged(nameof(SelectedWarehouse));
+            }
         }
 
         private Warehouse _selectedWarehouseToTransferTo;
@@ -68,55 +209,7 @@ namespace POS.ViewModels.Base
             get { return _selectedWarehouseToTransferTo; }
             set { _selectedWarehouseToTransferTo = value; OnPropertyChanged(nameof(SelectedWarehouseToTransferTo)); }
         }
-        private ObservableCollection<CartItem> _cartItemsList;
 
-        public ObservableCollection<CartItem> CartItemsList
-        {
-            get { return _cartItemsList; }
-            set
-            {
-                if (_cartItemsList != value)
-                {
-                    _cartItemsList = value;
-                    OnPropertyChanged(nameof(CartItemsList));
-
-                }
-            }
-        }
-
-        private CartItem _selectedCartItem;
-
-        public CartItem SelectedCartItem
-        {
-            get { return _selectedCartItem; }
-            set
-            {
-                if (_selectedCartItem != value)
-                {
-                    _selectedCartItem = value;
-                    OnPropertyChanged(nameof(SelectedCartItem));
-                    SetSelectedItemValues(SelectedCartItem);
-                }
-            }
-        }
-        private void RecalculateTotalAmount()
-        {
-            TotalAmount = CartItemsList.Sum(item => item.Price);
-        }
-        public void SetSelectedItemValues(CartItem selectedCartItem)
-        {
-            if (selectedCartItem != null)
-            {
-                SelectedProduct = ProductList.FirstOrDefault(product => product.Id == selectedCartItem.Id);
-                SelectedCategory = CategoryList.FirstOrDefault(category => category.Name == selectedCartItem.Category);
-
-                ItemName = selectedCartItem.Name;
-                ItemBarcode = selectedCartItem.Barcode;
-                Quantity = selectedCartItem.Quantity;
-                SalePrice = selectedCartItem.Price;
-                Notes = selectedCartItem.Details;
-            }
-        }
 
         private Category _selectedCategory;
         public Category SelectedCategory
@@ -130,9 +223,24 @@ namespace POS.ViewModels.Base
 
                     OnPropertyChanged(nameof(SelectedCategory));
 
-                    ProductList = SampleData.GenerateProducts(10, _selectedCategory);
+                    //ProductList = SampleData.GenerateProducts(10, _selectedCategory);
+                    if (_selectedCategory != null)
+                    {
+                        // Clear and filter ProductList for selected category's products
+                        ProductList.Clear();
+                        foreach (var product in _selectedCategory.Products)
+                        {
+                            ProductList.Add(product);
+                        }
+                        OnPropertyChanged(nameof(ProductList));
+                    }
+                    else
+                    {
+                        // Handle case where no category is selected (clear or set default)
+                        ProductList.Clear(); // Or set some default value if needed
+                        OnPropertyChanged(nameof(ProductList));
+                    }
                     //ProductList = new ObservableCollection<Product>(_selectedCategory?.Products.ToList());
-                    OnPropertyChanged(nameof(ProductList));
                 }
             }
         }
@@ -176,14 +284,26 @@ namespace POS.ViewModels.Base
                 if (_selectedProduct != value)
                 {
                     _selectedProduct = value;
-                    OnPropertyChanged(nameof(SelectedProduct));
+
                     if (_selectedProduct != null)
                     {
                         ItemName = _selectedProduct.Name;
                         ItemBarcode = _selectedProduct.Barcode;
                         Quantity = 1;
-                        SalePrice = _selectedProduct.Price;
+                        SalePrice = _selectedProduct.SalePrice;
+                        ProductWarehouse = SelectedWarehouse;
+                        //if (_selectedProduct != null && SelectedWarehouse != null && SelectedWarehouse.Id != null)
+                        //{
+                        //    double? RQuantity = _selectedProduct.Quantity(ProductWarehouse.Id);
+                        //    RemainingQuantity = RQuantity ?? 0;
+
+
+                        //}
+
+                        // Set color for RemainingQuantity
+                        //RemainingQuantityColor = RemainingQuantity >= 0 ? Brushes.Blue : Brushes.Red;
                     }
+                    OnPropertyChanged(nameof(SelectedProduct));
                 }
             }
         }
@@ -202,7 +322,7 @@ namespace POS.ViewModels.Base
                     // Update ProductList based on the search
                     if (SelectedCategory != null)
                     {
-                        var filteredProducts = SampleData.GenerateProducts(10, SelectedCategory)
+                        var filteredProducts = ProductList
                             .Where(product => product.Name.Contains(TextSearchGoods));
 
                         UpdateCurrentList(filteredProducts);
@@ -223,7 +343,7 @@ namespace POS.ViewModels.Base
                     OnPropertyChanged(nameof(TextSearch));
 
                     // Update CategoryList based on the search
-                    var filteredCategories = SampleData.GenerateCategories()
+                    var filteredCategories = CategoryList
                         .Where(category => category.Name.Contains(TextSearch));
 
                     UpdateCurrentList(filteredCategories);
@@ -283,22 +403,24 @@ namespace POS.ViewModels.Base
                 }
             }
         }
-        private int _billNumber;
-        private double _totalAmount;
-        private double _earnings;
-
-        public int BillNumber
+        private double _totalQuantity;
+        public double TotalQuantity
         {
-            get { return _billNumber; }
+            get => _totalQuantity;
             set
             {
-                if (_billNumber != value)
+                if (_totalQuantity != value)
                 {
-                    _billNumber = value;
-                    OnPropertyChanged(nameof(BillNumber));
+                    _totalQuantity = value;
+                    OnPropertyChanged(nameof(TotalQuantity));
                 }
             }
         }
+
+        private double _totalAmount;
+        private double _earnings;
+
+
 
         public double TotalAmount
         {
@@ -362,7 +484,22 @@ namespace POS.ViewModels.Base
             }
         }
 
+        private bool _isSale = false;
 
+        public bool IsSale
+        {
+            get { return _isSale; }
+            set
+            {
+                if (_isSale != value)
+                {
+                    _isSale = value;
+                    OnPropertyChanged(nameof(IsSale));
+
+
+                }
+            }
+        }
         public double Quantity
         {
             get { return _quantity; }
@@ -372,21 +509,31 @@ namespace POS.ViewModels.Base
                 {
                     if (SelectedProduct != null)
                     {
-                        if (value > SelectedProduct.Quantity)
+                        var productQuantity = SelectedProduct.Quantity(SelectedWarehouse.Id);
+                        if (IsSale) // Check if it's a sale
                         {
-                            // Quantity entered is greater than available, show alert and set to max
-                            MessageBox.Show("الكمية المدخلة تتجاوز الكمية المتاحة. تم تعيين الكمية إلى الحد الأقصى.");
 
-                            value = SelectedProduct.Quantity;
+                            if (productQuantity < 0)
+                            {
+                                // Quantity entered is not valid, show alert and set to minimum (1 in this case)
+                                MessageBox.Show("الكمية المدخلة غير صالحة. تم تعيين الكمية إلى الحد الأدنى.");
+                                value = 1; // Set to minimum valid value
+                            }
+                            else if (value > productQuantity)
+                            {
+                                // Quantity entered is greater than available, show alert and set to max
+                                MessageBox.Show("الكمية المدخلة تتجاوز الكمية المتاحة. تم تعيين الكمية إلى الحد الأقصى.");
+
+                                value = productQuantity;
+                            }
                         }
 
                         _quantity = value;
                         OnPropertyChanged(nameof(Quantity));
 
-                        SalePrice = Quantity * SelectedProduct.Price;
-
-
-                        RemainingQuantity = SelectedProduct.Quantity - Quantity;
+                        SalePrice = Quantity * UnitPrice;
+                        PurchasePrice = Quantity * UnitPrice;
+                        RemainingQuantity = productQuantity;//- Quantity
 
                         // Set color for RemainingQuantity
                         RemainingQuantityColor = RemainingQuantity >= 0 ? Brushes.Blue : Brushes.Red;
@@ -396,7 +543,20 @@ namespace POS.ViewModels.Base
         }
 
 
+        private double _purchasePrice;
 
+        public double PurchasePrice
+        {
+            get { return _purchasePrice; }
+            set
+            {
+                if (_purchasePrice != value)
+                {
+                    _purchasePrice = value;
+                    OnPropertyChanged(nameof(PurchasePrice));
+                }
+            }
+        }
         public double SalePrice
         {
             get { return _salePrice; }
@@ -408,18 +568,47 @@ namespace POS.ViewModels.Base
                     OnPropertyChanged(nameof(SalePrice));
 
 
-                    double profitLoss = (Quantity * SalePrice) - (Quantity * SelectedProduct.Cost);
+                    //double profitLoss = (double)((Quantity * SalePrice) - (Quantity * SelectedProduct.GetLastPurchasePrice()));
 
-                    if (profitLoss >= 0)
-                    {
-                        SafetyIndicator = "مكسب";
-                        SafetyIndicatorColor = Brushes.Blue;
-                    }
-                    else
-                    {
-                        SafetyIndicator = "خسارة";
-                        SafetyIndicatorColor = Brushes.Red;
-                    }
+                    //if (profitLoss >= 0)
+                    //{
+                    //    SafetyIndicator = "مكسب";
+                    //    SafetyIndicatorColor = Brushes.Blue;
+                    //}
+                    //else
+                    //{
+                    //    SafetyIndicator = "خسارة";
+                    //    SafetyIndicatorColor = Brushes.Red;
+                    //}
+                }
+            }
+        }
+        private double _unitPrice;
+        public double UnitPrice
+        {
+            get { return _unitPrice; }
+            set
+            {
+                if (_unitPrice != value)
+                {
+                    _unitPrice = value;
+                    SalePrice = Quantity * UnitPrice;
+                    PurchasePrice = Quantity * UnitPrice;
+                    OnPropertyChanged(nameof(UnitPrice));
+
+
+                    //double profitLoss = (double)((Quantity * SalePrice) - (Quantity * SelectedProduct.GetLastPurchasePrice()));
+
+                    //if (profitLoss >= 0)
+                    //{
+                    //    SafetyIndicator = "مكسب";
+                    //    SafetyIndicatorColor = Brushes.Blue;
+                    //}
+                    //else
+                    //{
+                    //    SafetyIndicator = "خسارة";
+                    //    SafetyIndicatorColor = Brushes.Red;
+                    //}
                 }
             }
         }
@@ -512,61 +701,114 @@ namespace POS.ViewModels.Base
         public ICommand CellCommand { get; }
         public ICommand NewCommand { get; }
         public ICommand EndSaleCommand { get; }
-        public ICommand PaymentCommand { get; }
-        public ICommand DeliveryCommand { get; }
-        public ICommand SuspendBillCommand { get; }
-        public ICommand CancelBillCommand { get; }
+
         public ICommand EndSaleWithoutInternetCommand { get; }
         public ICommand ViewPendingBillsCommand { get; }
 
-        public ICommand AddCommand { get; }
-        public ICommand AcceptCommand { get; }
-        public ICommand CancelCommand { get; }
-        public ICommand DeleteCommand { get; }
+        public AppDbContext _dbContext; // Add a reference to your DbContext
 
         public BaseProductsViewModel()
         {
+            // Initialize DbContext
+            _dbContext = new AppDbContext();
             MaxGoodsChecked = true;
-            CartItemsList = new ObservableCollection<CartItem>();
             CategoryList = new ObservableCollection<Category>();
             ProductList = new ObservableCollection<Product>();
 
-            CategoryList = SampleData.GenerateCategories();
+            ReadyProductsList = new ObservableCollection<ReadyProduct>();
+
+            //CategoryList = SampleData.GenerateCategories();
             Employees = new ObservableCollection<ApplicationUser>();
 
-            LoadEmployees();
             Suppliers = new ObservableCollection<Supplier>();
             Warehouses = new ObservableCollection<Warehouse>();
             //SelectedCategory = CategoryList?.FirstOrDefault();
             //ProductList = new ObservableCollection<Product>();
-
-
             CloseCommand = new RelayCommand(ExecuteCloseCommand);
             RefreshCommand = new RelayCommand(ExecuteRefreshCommand);
             CellCommand = new RelayCommand(ExecuteCellCommand);
             NewCommand = new RelayCommand(ExecuteNewCommand);
             EndSaleCommand = new RelayCommand(ExecuteEndSaleCommand);
-            PaymentCommand = new RelayCommand(ExecutePayment);
-            DeliveryCommand = new RelayCommand(ExecuteDelivery);
-            SuspendBillCommand = new RelayCommand(ExecuteSuspendBillCommand);
-            CancelBillCommand = new RelayCommand(ExecuteCancelBill);
+
             EndSaleWithoutInternetCommand = new RelayCommand(ExecuteEndSaleWithoutInternetCommand);
             ViewPendingBillsCommand = new RelayCommand(ExecuteViewPendingBillsCommand);
 
-            AddCommand = new RelayCommand(ExecuteAddCommand);
-            AcceptCommand = new RelayCommand(ExecuteAcceptCommand);
-            CancelCommand = new RelayCommand(ExecuteCancelCommand);
-            DeleteCommand = new RelayCommand(ExecuteDeleteCommand);
 
-            #region CartListEvents
-            CartList_CurrentCellChangedCommand = new RelayCommand(ExecuteCartList_CurrentCellChangedCommand);
-            CartList_SelectionChangedCommand = new RelayCommand(ExecuteCartList_SelectionChangedCommand);
-            CartList_MouseDownCommand = new RelayCommand(ExecuteCartList_MouseDownCommand);
-            CartList_MouseDoubleClickCommand = new RelayCommand(ExecuteCartList_MouseDoubleClickCommand);
-            CartList_DataContextChangedCommand = new RelayCommand(ExecuteCartList_DataContextChangedCommand);
-            CartList_SelectedCellsChangedCommand = new RelayCommand(ExecuteCartList_SelectedCellsChangedCommand);
-            #endregion
+
+
+            LoadEmployees();
+            LoadWarehouses();
+            LoadSuppliers();
+            LoadCustomers();
+            LoadCategoriesWithProducts();
         }
+        private void LoadWarehouses()
+        {
+            IQueryable<Warehouse> query = _dbContext.Warehouses; // Initial query
+
+            ObservableCollection<Warehouse> warehouses = new ObservableCollection<Warehouse>(query.ToList());
+
+            Warehouses = warehouses;
+            if (Warehouses != null && Warehouses.Count > 0)
+            {
+                SelectedWarehouse = Warehouses.FirstOrDefault();
+            }
+        }
+        private void LoadSuppliers()
+        {
+            IQueryable<Supplier> query = _dbContext.Suppliers; // Initial query
+
+            ObservableCollection<Supplier> suppliers = new ObservableCollection<Supplier>(query.ToList());
+
+            Suppliers = suppliers;
+        }
+        private void LoadCustomers()
+        {
+            IQueryable<Customer> query = _dbContext.Customers; // Initial query
+
+            ObservableCollection<Customer> customers = new ObservableCollection<Customer>(query.ToList());
+
+            Customers = customers;
+        }
+        private void LoadCategoriesWithProducts()
+        {
+            // Clear the existing categories and products
+            CategoryList.Clear();
+            ProductList.Clear();
+
+            // Load categories with their associated products for the selected warehouse
+            var categoriesWithProducts = _dbContext.Categories
+               .Include(c => c.Products)
+                   .ThenInclude(p => p.SaleProducts)
+               .Include(c => c.Products)
+                   .ThenInclude(p => p.PurchaseProducts)
+               .Select(c => new
+               {
+                   Category = c,
+                   Products = c.Products.Select(p => new
+                   {
+                       Product = p,
+                       SaleQuantity = SelectedWarehouse != null ? p.SaleProducts.Where(sp => sp.WarehouseId == SelectedWarehouse.Id).Sum(sp => sp.Quantity) : 0,
+                       PurchaseQuantity = SelectedWarehouse != null ? p.PurchaseProducts.Where(pp => pp.WarehouseId == SelectedWarehouse.Id).Sum(pp => pp.Quantity) : 0
+                   })
+               })
+               .ToList();
+
+
+            foreach (var item in categoriesWithProducts)
+            {
+                // Add the category to the CategoryList
+                CategoryList.Add(item.Category);
+
+                // Add products of the category to the ProductList
+                foreach (var product in item.Products)
+                {
+                    product.Product.ImagePath = Path.Combine(Environment.CurrentDirectory, "images", "products", product.Product.ImagePath);
+                    ProductList.Add(product.Product);
+                }
+            }
+        }
+
 
         private async Task LoadEmployees()
         {
@@ -598,53 +840,6 @@ namespace POS.ViewModels.Base
             // Handle logic for ending sale
         }
 
-        private void ExecuteSuspendBillCommand(object parameter)
-        {
-            // Handle logic for suspending bill
-        }
-
-        private void ExecutePayment(object obj)
-        {
-            // Create and show the payment dialog
-            PaymentDialog paymentDialog = new PaymentDialog();
-            paymentDialog.viewModel.Total = 100.ToString();
-            paymentDialog.viewModel.TotalQuantity = 100.ToString();
-            // Show the dialog as a modal window
-            bool? result = paymentDialog.ShowDialog();
-
-            // Check the result of the dialog
-            if (result.HasValue)
-            {
-                // Payment dialog was closed, handle the result
-                if (paymentDialog.viewModel.PaymentResult == true)
-                {
-                    // Payment was confirmed
-                    MessageBox.Show("تم تأكيد الدفع", "تأكيد الدفع", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
-                }
-                else
-                {
-                    // Payment was canceled
-                    MessageBox.Show("تم إلغاء الدفع", "إلغاء الدفع", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
-                }
-            }
-        }
-
-
-
-        private void ExecuteDelivery(object obj)
-        {
-            // Put your delivery logic here
-            Console.WriteLine("Delivery command executed");
-        }
-
-
-
-        private void ExecuteCancelBill(object obj)
-        {
-            // Put your cancel bill logic here
-            Console.WriteLine("Cancel bill command executed");
-        }
-
         private void ExecuteEndSaleWithoutInternetCommand(object parameter)
         {
             // Handle logic for ending sale without internet
@@ -655,106 +850,9 @@ namespace POS.ViewModels.Base
             // Handle logic for viewing pending bills
         }
 
-        private void ExecuteAddCommand(object parameter)
-        {
-            if (SelectedProduct != null)
-            {
-                Quantity++;
-            }
-        }
-
-        private void ExecuteAcceptCommand(object parameter)
-        {
-            if (SelectedProduct != null && Quantity > 0 && SalePrice > 0)
-            {
-                // Check if the item already exists in the cart
-                CartItem existingCartItem = CartItemsList.FirstOrDefault(item => item.Id == SelectedProduct.Id);
-
-                if (existingCartItem != null)
-                {
-                    if (existingCartItem.Quantity + Quantity <= SelectedProduct.Quantity)
-                    {
-                        existingCartItem.Quantity += Quantity;
-                    }
-                    else
-                    {
-                        // The sum exceeds the maximum quantity, set the quantity to the maximum
-                        MessageBox.Show("الكمية المدخلة تتجاوز الكمية المتاحة. تم تعيين الكمية إلى الحد الأقصى.");
-                        existingCartItem.Quantity = SelectedProduct.Quantity;
-                    }
-                    existingCartItem.Earned = existingCartItem.Price - (existingCartItem.Cost * existingCartItem.Quantity);
-                }
-                else
-                {
-                    CartItemsList.Add(new CartItem
-                    {
-                        Id = SelectedProduct.Id,
-                        Name = SelectedProduct.Name,
-                        Category = SelectedProduct.Category.Name,
-                        Quantity = Quantity,
-                        Cost = SelectedProduct.Cost,
-                        Price = SalePrice,
-                        Type = SelectedProduct.Type,
-                        Time = DateTime.Now.ToString("HH:mm:ss"),
-                        Datex = DateTime.Now.ToString("yyyy-MM-dd"),
-                        Barcode = SelectedProduct.Barcode,
-                        Earned = SalePrice - (SelectedProduct.Cost * Quantity),
-                        Details = Notes
-                    });
-                }
-                RecalculateTotalAmount();
-
-                //Quantity = 1;
-                //SalePrice = SelectedProduct.Price; // You may need to adjust this based on your requirements
-
-            }
-
-        }
 
 
-        private void ExecuteCancelCommand(object parameter)
-        {
-            // Add logic for CancelCommand
-        }
 
-        private void ExecuteDeleteCommand(object parameter)
-        {
-            // Add logic for DeleteCommand
-        }
-
-        #region CartListEvents
-        private void ExecuteCartList_CurrentCellChangedCommand(object parameter)
-        {
-            // Handle CartList_CurrentCellChangedCommand logic here
-        }
-
-        private void ExecuteCartList_SelectionChangedCommand(object parameter)
-        {
-            // Handle CartList_SelectionChangedCommand logic here
-        }
-
-        private void ExecuteCartList_MouseDownCommand(object parameter)
-        {
-            // Handle CartList_MouseDownCommand logic here
-        }
-
-        private void ExecuteCartList_MouseDoubleClickCommand(object parameter)
-        {
-            // Handle CartList_MouseDoubleClickCommand logic here
-        }
-
-        private void ExecuteCartList_DataContextChangedCommand(object parameter)
-        {
-            // Handle CartList_DataContextChangedCommand logic here
-        }
-
-        private void ExecuteCartList_SelectedCellsChangedCommand(object parameter)
-        {
-            // Handle CartList_SelectedCellsChangedCommand logic here
-        }
-
-
-        #endregion
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)

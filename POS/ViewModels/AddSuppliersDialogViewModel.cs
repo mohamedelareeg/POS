@@ -362,7 +362,7 @@ namespace POS.ViewModels
                 Notes = Notes,
                 CommercialRegister = CommercialRegister,
                 TaxCard = TaxCard,
-                Image = ImageSource
+                Image = SaveImage(ImageSource)
             };
             // Add the new Supplier to the DbContext
             _dbContext.Suppliers.Add(newSupplier);
@@ -420,14 +420,14 @@ namespace POS.ViewModels
                 SupplierToUpdate.Notes = Notes;
                 SupplierToUpdate.CommercialRegister = CommercialRegister;
                 SupplierToUpdate.TaxCard = TaxCard;
-                SupplierToUpdate.Image = ImageSource;
+                SupplierToUpdate.Image = SaveImage(ImageSource);
 
                 // Save changes to the database
                 _dbContext.SaveChanges();
 
                 // Update the ObservableCollection
                 SelectedItem.Name = Name;
-                SelectedItem.Image = ImageSource;
+                // SelectedItem.Image = ImageSource;
             }
         }
 
@@ -535,7 +535,7 @@ namespace POS.ViewModels
             try
             {
                 uniqueFileName = $"{Guid.NewGuid()}.jpeg";
-                string directoryPath = Path.Combine(Environment.CurrentDirectory, "images", "categories");
+                string directoryPath = Path.Combine(Environment.CurrentDirectory, "images", "Suppliers");
                 string destinationImagePath = Path.Combine(directoryPath, uniqueFileName);
 
                 // Create the directory if it does not exist

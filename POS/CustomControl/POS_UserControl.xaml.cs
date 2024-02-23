@@ -16,5 +16,25 @@ namespace POS.CustomControl
             DataContext = viewModel;
             InitializeComponent();
         }
+
+        private void ImageListBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+
+        }
+
+        private void ImageListBox_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+
+        }
+
+        private void ImageListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void ImageListBox_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+
+        }
     }
 }

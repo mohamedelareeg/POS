@@ -162,7 +162,7 @@ namespace POS.Dialogs.ViewModels
             Category newCategory = new Category
             {
                 Name = Name,
-                Image = ImageSource
+                Image = SaveImage(ImageSource)
             };
 
             // Add the new category to the DbContext
@@ -207,7 +207,7 @@ namespace POS.Dialogs.ViewModels
 
                 // Update the ObservableCollection
                 SelectedItem.Name = Name;
-                SelectedItem.Image = ImageSource;
+                SelectedItem.Image = SaveImage(ImageSource);
             }
         }
 

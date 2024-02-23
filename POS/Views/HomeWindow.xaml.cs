@@ -29,6 +29,7 @@ namespace POS.Views
         AuthenticationService authenticationService = App.ServiceProvider.GetRequiredService<AuthenticationService>();
         private ObservableCollection<string> messages;
         private DispatcherTimer timer;
+
         public HomeWindow()
         {
 
@@ -78,6 +79,40 @@ namespace POS.Views
             var salesAndInvoices = new MenuItem { Name = "البيع والفواتير", Identifier = "salesAndInvoices", Icon = PackIconKind.ShoppingOutline, IsClickable = false, RequiredClaim = "salesScreen" };
             salesAndInvoices.Children.Add(new MenuItem { Name = "شاشة البيع", Identifier = "salesScreen", Icon = PackIconKind.CartOutline, RequiredClaim = "salesScreen" });
             salesAndInvoices.Children.Add(new MenuItem { Name = "فواتير البيع", Identifier = "salesInvoices", Icon = PackIconKind.FileDocumentOutline, RequiredClaim = "salesInvoices" });
+            // Add "اضافة عرض سعر" menu item
+            salesAndInvoices.Children.Add(new MenuItem
+            {
+                Name = "اضافة عرض سعر",
+                Identifier = "addPriceOffer",
+                Icon = PackIconKind.TagPlusOutline,
+                RequiredClaim = "addPriceOffer"
+            });
+
+            // Add "عروض الاسعار" menu item
+            salesAndInvoices.Children.Add(new MenuItem
+            {
+                Name = "عروض الاسعار",
+                Identifier = "priceOffers",
+                Icon = PackIconKind.FileMultipleOutline,
+                RequiredClaim = "priceOffers"
+            });
+
+            salesAndInvoices.Children.Add(new MenuItem
+            {
+                Name = "اضافة مرتجعات مبيعات",
+                Identifier = "addSalesReturns",
+                Icon = PackIconKind.ArrowLeft,
+                RequiredClaim = "addSalesReturns"
+            });
+
+            // Add "مرتجعات المبيعات" menu item
+            salesAndInvoices.Children.Add(new MenuItem
+            {
+                Name = "مرتجعات المبيعات",
+                Identifier = "salesReturns",
+                Icon = PackIconKind.FileDocumentOutline,
+                RequiredClaim = "salesReturns"
+            });
 
             var inventoryAndPurchases = new MenuItem { Name = "المخزن والمشتريات", Identifier = "inventoryAndPurchases", Icon = PackIconKind.StoreOutline, IsClickable = false };
             inventoryAndPurchases.Children.Add(new MenuItem { Name = "المخزن", Identifier = "inventory", Icon = PackIconKind.PackageVariant, RequiredClaim = "inventory" });
@@ -86,6 +121,23 @@ namespace POS.Views
             inventoryAndPurchases.Children.Add(new MenuItem { Name = "تقرير المخزن", Identifier = "inventoryReport", Icon = PackIconKind.ChartBar, RequiredClaim = "inventoryReport" });
             inventoryAndPurchases.Children.Add(new MenuItem { Name = "فواتير الشراء", Identifier = "purchaseInvoices", Icon = PackIconKind.FileDocumentOutline, RequiredClaim = "purchaseInvoices" });
 
+            // Add "إضافة مرتجع مشتريات" menu item
+            inventoryAndPurchases.Children.Add(new MenuItem
+            {
+                Name = "إضافة مرتجع مشتريات",
+                Identifier = "addPurchaseReturns",
+                Icon = PackIconKind.ArrowLeft,
+                RequiredClaim = "addPurchaseReturns"
+            });
+
+            // Add "مرتجعات المشتريات" menu item
+            inventoryAndPurchases.Children.Add(new MenuItem
+            {
+                Name = "مرتجعات المشتريات",
+                Identifier = "purchaseReturns",
+                Icon = PackIconKind.FileDocumentOutline,
+                RequiredClaim = "purchaseReturns"
+            });
             var treasury = new MenuItem { Name = "الخزينة", Identifier = "treasury", Icon = PackIconKind.Cash, IsClickable = false };
             treasury.Children.Add(new MenuItem { Name = "الوارد", Identifier = "incoming", Icon = PackIconKind.ArrowTopRight });
             treasury.Children.Add(new MenuItem { Name = "الصادر", Identifier = "outgoing", Icon = PackIconKind.ArrowBottomLeft });
@@ -105,24 +157,71 @@ namespace POS.Views
             expenses.Children.Add(new MenuItem { Name = "اضافة مصاريف", Identifier = "addExpenses", Icon = PackIconKind.PlusCircleOutline });
             expenses.Children.Add(new MenuItem { Name = "تقرير بالمصروفات", Identifier = "expensesReport", Icon = PackIconKind.ChartBar });
 
+            var reports = new MenuItem
+            {
+                Name = "التقارير",
+                Identifier = "reports",
+                Icon = PackIconKind.FileReport,
+                IsClickable = false
+            };
+            reports.Children.Add(new MenuItem { Name = "المبيعات", Identifier = "sales", Icon = PackIconKind.Shopping });
+            reports.Children.Add(new MenuItem { Name = "فواتير الخدمات", Identifier = "serviceBilling", Icon = PackIconKind.FileDocumentEditOutline });
+            reports.Children.Add(new MenuItem { Name = "حالة المخزون", Identifier = "stockInAndStockOut", Icon = PackIconKind.Box });
+            reports.Children.Add(new MenuItem { Name = "المشتريات", Identifier = "purchase", Icon = PackIconKind.Cart });
+            reports.Children.Add(new MenuItem { Name = "المصروفات", Identifier = "expenditure", Icon = PackIconKind.CreditCardMinusOutline });
+            reports.Children.Add(new MenuItem { Name = "الأرباح والخسائر", Identifier = "profitAndLoss", Icon = PackIconKind.TrendingUp });
+            reports.Children.Add(new MenuItem { Name = "دفتر اليومية", Identifier = "dayBook", Icon = PackIconKind.ClipboardListOutline });
+            reports.Children.Add(new MenuItem { Name = "كشف حساب تاجر", Identifier = "supplierLedger", Icon = PackIconKind.FileDocumentOutline });
+            reports.Children.Add(new MenuItem { Name = "كشف حساب عميل", Identifier = "customerLedger", Icon = PackIconKind.FileDocumentOutline });
+            reports.Children.Add(new MenuItem { Name = "أرصدة الزبائن (الجميع)", Identifier = "creditorsAndDebtors", Icon = PackIconKind.FileDocumentOutline });
+            reports.Children.Add(new MenuItem { Name = "التقرير العام", Identifier = "generalLedger", Icon = PackIconKind.FileDocumentOutline });
+            reports.Children.Add(new MenuItem { Name = "كشف حساب مندوب", Identifier = "salesmanLedger", Icon = PackIconKind.FileDocumentOutline });
+            reports.Children.Add(new MenuItem { Name = "كشف مبيعات", Identifier = "salesReport", Icon = PackIconKind.Shopping });
+            reports.Children.Add(new MenuItem { Name = "عمولة مناديب المبيعات (الجميع)", Identifier = "salesmanCommission", Icon = PackIconKind.FileDocumentOutline });
+            reports.Children.Add(new MenuItem { Name = "ميزان المراجعة", Identifier = "trialBalance", Icon = PackIconKind.ScaleBalance });
+            reports.Children.Add(new MenuItem { Name = "شروط الائتمان للزبائن", Identifier = "creditTerms", Icon = PackIconKind.FileDocumentOutline });
+            reports.Children.Add(new MenuItem { Name = "بيانات شروط الائتمان للزبائن", Identifier = "creditTermsStatements", Icon = PackIconKind.FileDocumentOutline });
+            reports.Children.Add(new MenuItem { Name = "الضرائب", Identifier = "tax", Icon = PackIconKind.FileDocumentOutline });
+            reports.Children.Add(new MenuItem { Name = "طباعة باركود الأصناف", Identifier = "barcodeLabelPrinting", Icon = PackIconKind.Barcode });
+            reports.Children.Add(new MenuItem { Name = "الأرباح", Identifier = "profits", Icon = PackIconKind.TrendingUp });
+
+
+
+
             var settings = new MenuItem { Name = "الاعدادات", Identifier = "settings", Icon = PackIconKind.CogOutline, IsClickable = false };
+
             settings.Children.Add(new MenuItem { Name = "اعدادات الحسابات", Identifier = "accountSettings", Icon = PackIconKind.AccountSettingsOutline });
+
             settings.Children.Add(new MenuItem { Name = "اعدادات النظام", Identifier = "systemSettings", Icon = PackIconKind.CogOutline });
             settings.Children.Add(new MenuItem { Name = "نسخ احتياطي", Identifier = "backup", Icon = PackIconKind.CloudUploadOutline });
+
             settings.Children.Add(new MenuItem { Name = "الأدوار", Identifier = "roles", Icon = PackIconKind.AccountGroupOutline });
+
+            settings.Children.Add(new MenuItem
+            {
+                Name = "اعدادات الشركة",
+                Identifier = "companySettings",
+                Icon = PackIconKind.CogOutline
+            });
+
             var homePage = new MenuItem { Name = "الصفحة الرئيسية", Identifier = "homePage", Icon = PackIconKind.Home };
 
             var menuItems = new ObservableCollection<MenuItem>
+                {
+                    homePage,
+                    salesAndInvoices,
+                    inventoryAndPurchases,
+                    treasury,
+                    customersAndInstallments,
+                    suppliersAndDebts,
+                    expenses,
+                    reports
+                };
+
+            if (authenticationService.CurrentUser.DefaultRole == "Administrator")
             {
-                homePage,
-                salesAndInvoices,
-                inventoryAndPurchases,
-                treasury,
-                customersAndInstallments,
-                suppliersAndDebts,
-                expenses,
-                settings
-            };
+                menuItems.Add(settings);
+            }
 
 
 
@@ -169,6 +268,10 @@ namespace POS.Views
         private bool isMenuOpen = true;
 
         private void MenuToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            Toogle();
+        }
+        private void Toogle()
         {
             // Toggle the visibility of the sideMenu control
             if (!isMenuOpen)
@@ -227,11 +330,20 @@ namespace POS.Views
                     {
                         //addCustomer
                         //addSupplier
+                        //accountSettings
                         case "homePage":
                             RenderPages.Children.Add(new Dashboard());
                             break;
+                        //addPriceOffer
+                        //salesInvoices
                         case "salesScreen":
                             RenderPages.Children.Add(new POS_UserControl());
+                            break;
+                        case "salesInvoices":
+                            RenderPages.Children.Add(new SalesHistory_UserControl());
+                            break;
+                        case "addPriceOffer":
+                            RenderPages.Children.Add(new PriceQuotation_UserControl());
                             break;
                         case "inventory":
                             RenderPages.Children.Add(new Inventory_UserControl());
@@ -250,15 +362,26 @@ namespace POS.Views
                             break;
                         //backup
                         //roles
+                        //companySettings
                         case "backup":
                             RenderPages.Children.Add(new Backup_UserControl());
+                            break;
+                        case "accountSettings":
+                            if (authenticationService.CurrentUser.DefaultRole == "Administrator")
+                            {
+                                RenderPages.Children.Add(new Users_UserControl());
+                            }
                             break;
                         case "roles":
                             RenderPages.Children.Add(new Roles_UserControl());
                             break;
+                        case "companySettings":
+                            RenderPages.Children.Add(new CompanyInfo_UserControl());
+                            break;
                         default:
                             break;
                     }
+                    Toogle();
                 }
                 else
                 {
@@ -313,6 +436,25 @@ namespace POS.Views
             }
         }
 
+        private void SettingsBtn_Click(object sender, RoutedEventArgs e)
+        {
 
+        }
+
+        private void SignOutBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("هل أنت متأكد أنك تريد تسجيل الخروج؟", "تأكيد الخروج", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                authenticationService.SignOutAsync();
+
+
+                // Show the login window
+                LoginView loginWindow = new LoginView();
+                loginWindow.Show();
+                this.Close();
+            }
+        }
     }
 }
