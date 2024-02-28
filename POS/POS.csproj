@@ -166,6 +166,18 @@
     <Compile Update="Dialogs\AddSuppliersDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Reports\Invoice.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Invoice.xsd</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Reports\Invoice.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>Invoice.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>

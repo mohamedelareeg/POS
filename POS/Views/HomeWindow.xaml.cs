@@ -273,35 +273,35 @@ namespace POS.Views
         }
         private void Toogle()
         {
-            // Toggle the visibility of the sideMenu control
-            if (!isMenuOpen)
-            {
-                // Change the icon to indicate menu is open
-                menuToggleButton.Content = new PackIcon { Kind = PackIconKind.ReorderHorizontal, Foreground = Brushes.Gray, Width = 30, Height = 30 };
-                isMenuOpen = true;
+            //// Toggle the visibility of the sideMenu control
+            //if (!isMenuOpen)
+            //{
+            //    // Change the icon to indicate menu is open
+            //    menuToggleButton.Content = new PackIcon { Kind = PackIconKind.ReorderHorizontal, Foreground = Brushes.Gray, Width = 30, Height = 30 };
+            //    isMenuOpen = true;
 
-                sideMenu.Visibility = Visibility.Visible;
-                // Check if there are at least two columns defined in the RenderPages grid
-                if (RenderPages.ColumnDefinitions.Count >= 2)
-                {
-                    // Expand the second column to fill the remaining space
-                    RenderPages.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
-                }
-            }
-            else
-            {
-                // Change the icon to indicate menu is closed
-                menuToggleButton.Content = new PackIcon { Kind = PackIconKind.ArrowCollapseLeft, Foreground = Brushes.Gray, Width = 30, Height = 30 };
-                isMenuOpen = false;
+            //    sideMenu.Visibility = Visibility.Visible;
+            //    // Check if there are at least two columns defined in the RenderPages grid
+            //    if (RenderPages.ColumnDefinitions.Count >= 2)
+            //    {
+            //        // Expand the second column to fill the remaining space
+            //        RenderPages.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
+            //    }
+            //}
+            //else
+            //{
+            //    // Change the icon to indicate menu is closed
+            //    menuToggleButton.Content = new PackIcon { Kind = PackIconKind.ArrowCollapseLeft, Foreground = Brushes.Gray, Width = 30, Height = 30 };
+            //    isMenuOpen = false;
 
-                sideMenu.Visibility = Visibility.Collapsed;
-                // Check if there are at least two columns defined in the RenderPages grid
-                if (RenderPages.ColumnDefinitions.Count >= 2)
-                {
-                    // Collapse the second column
-                    RenderPages.ColumnDefinitions[1].Width = new GridLength(0);
-                }
-            }
+            //    sideMenu.Visibility = Visibility.Collapsed;
+            //    // Check if there are at least two columns defined in the RenderPages grid
+            //    if (RenderPages.ColumnDefinitions.Count >= 2)
+            //    {
+            //        // Collapse the second column
+            //        RenderPages.ColumnDefinitions[1].Width = new GridLength(0);
+            //    }
+            //}
         }
         private void NotificationButton_Click(object sender, RoutedEventArgs e)
         {
@@ -312,85 +312,118 @@ namespace POS.Views
         {
             profilePopup.IsOpen = true;
         }
-
-
-        private void menuTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private async Task HandleSelectedMenuItem(MenuItem selectedMenuItem)
         {
-            if (menuTreeView.SelectedItem != null && menuTreeView.SelectedItem is MenuItem selectedMenuItem)
+            if (selectedMenuItem.IsClickable)
             {
-                /*
-                    inventoryAndPurchases.Children.Add(new MenuItem { Name = "شراء بضاعة", Identifier = "purchaseGoods", Icon = PackIconKind.Shopping });
-                    inventoryAndPurchases.Children.Add(new MenuItem { Name = "حركة بضاعة", Identifier = "goodsMovement", Icon = PackIconKind.Truck });
-                 */
-                // Check if the selected menu item is clickable
-                if (selectedMenuItem.IsClickable)
+               
+
+                UserControl newControl = CreateControlForMenuItem(selectedMenuItem);
+
+                if (newControl != null)
                 {
-                    RenderPages.Children.Clear();
-                    switch (selectedMenuItem.Identifier)
+                    TabItem existingTab = tabControlRenderPages.Items.OfType<TabItem>().FirstOrDefault(t => t.Tag as string == selectedMenuItem.Identifier);
+                    if (existingTab != null)
                     {
-                        //addCustomer
-                        //addSupplier
-                        //accountSettings
-                        case "homePage":
-                            RenderPages.Children.Add(new Dashboard());
-                            break;
-                        //addPriceOffer
-                        //salesInvoices
-                        case "salesScreen":
-                            RenderPages.Children.Add(new POS_UserControl());
-                            break;
-                        case "salesInvoices":
-                            RenderPages.Children.Add(new SalesHistory_UserControl());
-                            break;
-                        case "addPriceOffer":
-                            RenderPages.Children.Add(new PriceQuotation_UserControl());
-                            break;
-                        case "inventory":
-                            RenderPages.Children.Add(new Inventory_UserControl());
-                            break;
-                        case "purchaseGoods":
-                            RenderPages.Children.Add(new Purchase_Products_UserControl());
-                            break;
-                        case "goodsMovement":
-                            RenderPages.Children.Add(new Moving_Products_UserControl());
-                            break;
-                        case "addCustomer":
-                            RenderPages.Children.Add(new Customer_Add_UserControl());
-                            break;
-                        case "addSupplier":
-                            RenderPages.Children.Add(new Supplier_Add_UserControl());
-                            break;
-                        //backup
-                        //roles
-                        //companySettings
-                        case "backup":
-                            RenderPages.Children.Add(new Backup_UserControl());
-                            break;
-                        case "accountSettings":
-                            if (authenticationService.CurrentUser.DefaultRole == "Administrator")
-                            {
-                                RenderPages.Children.Add(new Users_UserControl());
-                            }
-                            break;
-                        case "roles":
-                            RenderPages.Children.Add(new Roles_UserControl());
-                            break;
-                        case "companySettings":
-                            RenderPages.Children.Add(new CompanyInfo_UserControl());
-                            break;
-                        default:
-                            break;
+                        tabControlRenderPages.SelectedItem = existingTab;
                     }
-                    Toogle();
+                    else
+                    {
+                        loadingProgressBar.Visibility = Visibility.Visible;
+                        RenderPages.IsEnabled = false;
+                        TabItem tabItem = new TabItem
+                        {
+
+                            Name = "page", // Set the Name property
+                            Header = selectedMenuItem.Name,
+                            Content = newControl,
+                            Tag = selectedMenuItem.Identifier
+                        };
+                        // Add the "page" style to the tab item
+                        //tabControlRenderPages.Resources.Add("page", tabItem);
+
+                        tabControlRenderPages.Items.Add(tabItem);
+                        tabControlRenderPages.SelectedItem = tabItem;
+
+                        Toogle();
+
+                        await Task.Delay(2000);
+
+                        loadingProgressBar.Visibility = Visibility.Collapsed;
+                        RenderPages.IsEnabled = true;
+                    }
                 }
-                else
-                {
-                    // Menu item is not clickable, handle accordingly (e.g., display a message or disable functionality)
-                    // Example: MessageBox.Show("This menu item is not clickable.");
-                }
+
+              
+            }
+            else
+            {
+                // Menu item is not clickable
+                // Handle accordingly
             }
         }
 
+        private UserControl CreateControlForMenuItem(MenuItem selectedMenuItem)
+        {
+            UserControl newControl = null;
+            switch (selectedMenuItem.Identifier)
+            {
+                // Add cases for each menu item
+                case "homePage":
+                    newControl = new Dashboard();
+                    break;
+                case "salesScreen":
+                    newControl = new POS_UserControl();
+                    break;
+                case "salesInvoices":
+                    newControl = new SalesHistory_UserControl();
+                    break;
+                case "addPriceOffer":
+                    newControl = new PriceQuotation_UserControl();
+                    break;
+                case "inventory":
+                    newControl = new Inventory_UserControl();
+                    break;
+                case "purchaseGoods":
+                    newControl = new Purchase_Products_UserControl();
+                    break;
+                case "goodsMovement":
+                    newControl = new Moving_Products_UserControl();
+                    break;
+                case "addCustomer":
+                    newControl = new Customer_Add_UserControl();
+                    break;
+                case "addSupplier":
+                    newControl = new Supplier_Add_UserControl();
+                    break;
+                case "backup":
+                    newControl = new Backup_UserControl();
+                    break;
+                case "accountSettings":
+                    if (authenticationService.CurrentUser.DefaultRole == "Administrator")
+                    {
+                        newControl = new Users_UserControl();
+                    }
+                    break;
+                case "roles":
+                    newControl = new Roles_UserControl();
+                    break;
+                case "companySettings":
+                    newControl = new CompanyInfo_UserControl();
+                    break;
+                default:
+                    break;
+            }
+            return newControl;
+        }
+
+        private async void menuTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (menuTreeView.SelectedItem != null && menuTreeView.SelectedItem is MenuItem selectedMenuItem)
+            {
+                await HandleSelectedMenuItem(selectedMenuItem);
+            }
+        }
 
 
 
@@ -454,6 +487,118 @@ namespace POS.Views
                 LoginView loginWindow = new LoginView();
                 loginWindow.Show();
                 this.Close();
+            }
+        }
+
+        private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void DetachTab_Click(object sender, RoutedEventArgs e)
+        {
+            // Get the TabItem associated with the clicked button
+            FontAwesome.WPF.FontAwesome button = (FontAwesome.WPF.FontAwesome)sender;
+            TabItem tabItem = FindParent<TabItem>(button);
+
+            // Check if the name of the TabItem is "page"
+            if (tabItem.Name == "page")
+            {
+                // Detach the tab into a new window
+                DetachTab(tabItem);
+            }
+            else
+            {
+                // Show error message in Arabic
+                MessageBox.Show("هذا العنصر لا يمكن فصله.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
+        // Method to detach a tab into a new window
+        private void DetachTab(TabItem tab)
+        {
+            // Create a new window with the TabItem content
+            Window newWindow = new Window
+            {
+                Title = tab.Header.ToString(),
+                WindowState = WindowState.Maximized,
+                FlowDirection = FlowDirection.RightToLeft,
+                Content = tab.Content // Set the content of the new window to the content of the tab
+            };
+
+            // Handle the Closed event of the window
+            newWindow.Closed += (sender, e) =>
+            {
+                // Create a new tab item
+                TabItem newTabItem = new TabItem
+                {
+                    Name = "page", // Set the Name property
+                    Header = tab.Header,
+                    Content = tab.Content // Use the existing content
+                };
+                // Add the "page" style to the tab item
+             
+
+                // Add the tab item back to the tab control
+                tabControlRenderPages.Items.Add(newTabItem);
+
+                // Select the newly added tab item
+                tabControlRenderPages.SelectedItem = newTabItem;
+            };
+
+            // Remove the tab from the tab control
+            tabControlRenderPages.Items.Remove(tab);
+
+            // Show the window
+            newWindow.Show();
+        }
+
+
+
+
+        // Helper method to find parent of a specific type
+        private T FindParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
+
+            if (parentObject == null) return null;
+
+            T parent = parentObject as T;
+            return parent ?? FindParent<T>(parentObject);
+        }
+
+        private void CloseTab_Click(object sender, RoutedEventArgs e)
+        {
+            // Get the TabItem associated with the clicked button
+            FontAwesome.WPF.FontAwesome button = (FontAwesome.WPF.FontAwesome)sender;
+            TabItem tabItem = FindParent<TabItem>(button);
+
+            // Check if the name of the TabItem is "page"
+            if (tabItem.Name == "page")
+            {
+                // Detach the tab into a new window
+                CloseTab(tabItem);
+            }
+            else
+            {
+                // Show error message in Arabic
+                MessageBox.Show("هذا العنصر لا يمكن إزالته.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void CloseTab(TabItem tabItem)
+        {
+            // Remove the tab from the tab control
+            tabControlRenderPages.Items.Remove(tabItem);
+        }
+
+      
+        private async void menuTreeView_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (menuTreeView.SelectedItem != null && menuTreeView.SelectedItem is MenuItem selectedMenuItem)
+            {
+                await HandleSelectedMenuItem(selectedMenuItem);
             }
         }
     }
