@@ -395,7 +395,7 @@ HorizontalContentAlignment="Center">
             <Border Grid.Row="2" Margin="10"  Background="Transparent" BorderBrush="LightGray" BorderThickness="1" FlowDirection="RightToLeft">
                 <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <TabControl
-         
+                x:Name="InventoryTab"
       Height="100"
                     Margin="5"
       HorizontalAlignment="Stretch"

@@ -22,7 +22,7 @@
         >
 
     <Window.Resources>
-       
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <!-- ModernTextBoxStyle -->
         <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
             <Setter Property="Background" Value="#F7F7F7"/>
@@ -326,7 +326,7 @@ HorizontalAlignment="Left" />
                                 <!-- Side Menu -->
                                 <ScrollViewer VerticalScrollBarVisibility="Auto" >
                                     <StackPanel x:Name="sideMenu" Margin="0 15">
-                                        <TreeView x:Name="menuTreeView" BorderThickness="0" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" SelectedItemChanged="menuTreeView_SelectedItemChanged">
+                                        <TreeView x:Name="menuTreeView" BorderThickness="0" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" SelectedItemChanged="menuTreeView_SelectedItemChanged" MouseDoubleClick="menuTreeView_MouseLeftButtonDown">
                                             <TreeView.ItemTemplate>
                                                 <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                                                     <StackPanel Orientation="Horizontal">
@@ -343,9 +343,78 @@ HorizontalAlignment="Left" />
 
 
                                 <!-- Render Pages -->
-                                <Grid Grid.Column="1" Background="#F6F5F8" Name="RenderPages">
+                                <!--<Grid Grid.Column="1" Background="#F6F5F8" Name="RenderPages">
+                                    --><!-- Content for the second column goes here --><!--
+                                </Grid>-->
+                                <DockPanel Grid.Column="1" Background="#F6F5F8" Name="RenderPages">
+                                    <!-- Top Menu -->
+                                    <TabControl x:Name="tabControlRenderPages" SelectionChanged="tabControl_SelectionChanged">
+                                        <TabControl.Resources>
+                                            <!-- Define a style for the TabItem -->
+                                            <Style TargetType="TabItem">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="TabItem" >
+                                                            <Grid>
+                                                                <!-- Tab Header -->
+                                                                <Border Name="Border" BorderThickness="1,1,1,0" CornerRadius="3,3,0,0"
+            Background="{TemplateBinding Background}">
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <!-- Icon -->
+                                                                        <ContentPresenter x:Name="Icon" ContentSource="Header" Margin="5,0"/>
+
+                                                                        <!-- Close Button -->
+                                                                        <fa:FontAwesome x:Name="CloseButton" Icon="Times" FontSize="14" Foreground="Red"
+                            Margin="5,0" VerticalAlignment="Center" HorizontalAlignment="Right"
+                            MouseLeftButtonDown="CloseTab_Click" Visibility="{Binding IsSelected, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                                        <!-- Detach Button -->
+                                                                        <fa:FontAwesome x:Name="DetachButton" Icon="Columns" FontSize="14" Foreground="Green"
+                            Margin="5,0" VerticalAlignment="Center" HorizontalAlignment="Right"
+                            MouseLeftButtonDown="DetachTab_Click" Visibility="{Binding IsSelected, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                                                    </StackPanel>
+                                                                </Border>
+                                                            </Grid>
+
+
+                                                            <ControlTemplate.Triggers>
+                                                                <!-- Change the background color when the tab item is selected -->
+                                                                <Trigger Property="IsSelected" Value="True">
+                                                                    <Setter TargetName="Border" Property="Background" Value="LightBlue"/>
+                                                                    <Setter TargetName="CloseButton" Property="Visibility" Value="Visible"/>
+                                                                    <Setter TargetName="DetachButton" Property="Visibility" Value="Visible"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsSelected" Value="False">
+                                                                    <Setter TargetName="CloseButton" Property="Visibility" Value="Collapsed"/>
+                                                                    <Setter TargetName="DetachButton" Property="Visibility" Value="Collapsed"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </TabControl.Resources>
+                                    </TabControl>
+
+
                                     <!-- Content for the second column goes here -->
-                                </Grid>
+                                </DockPanel>
+
+                                <ProgressBar Grid.Column="1"
+x:Name="loadingProgressBar"
+IsIndeterminate="True"
+Visibility="Collapsed"
+VerticalAlignment="Center"
+HorizontalAlignment="Center"
+Margin="0,20,0,0"
+Height="30"
+Width="200"
+Background="#E0E0E0"
+BorderBrush="Transparent"
+Foreground="#2196F3"
+BorderThickness="0"
+/>
+
                                 <Border x:Name="keyboardContainer" Margin="10" Background="Transparent" BorderBrush="LightGray" BorderThickness="1" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" VerticalAlignment="Bottom" Visibility="Collapsed">
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <!-- First row (numbers) -->
