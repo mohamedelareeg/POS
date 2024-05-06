@@ -76,9 +76,9 @@ namespace POS.Views
 
         public async Task SetupMenu()
         {
-            var salesAndInvoices = new MenuItem { Name = "البيع والفواتير", Identifier = "salesAndInvoices", Icon = PackIconKind.ShoppingOutline, IsClickable = false, RequiredClaim = "salesScreen" };
-            salesAndInvoices.Children.Add(new MenuItem { Name = "شاشة البيع", Identifier = "salesScreen", Icon = PackIconKind.CartOutline, RequiredClaim = "salesScreen" });
-            salesAndInvoices.Children.Add(new MenuItem { Name = "فواتير البيع", Identifier = "salesInvoices", Icon = PackIconKind.FileDocumentOutline, RequiredClaim = "salesInvoices" });
+            var salesAndInvoices = new MenuItem { Name = "البيع والفواتير", Identifier = "salesAndInvoices", Icon = PackIconKind.ShoppingOutline, IsClickable = false };//, RequiredClaim = "salesScreen"
+            salesAndInvoices.Children.Add(new MenuItem { Name = "شاشة البيع", Identifier = "salesScreen", Icon = PackIconKind.CartOutline });
+            salesAndInvoices.Children.Add(new MenuItem { Name = "فواتير البيع", Identifier = "salesInvoices", Icon = PackIconKind.FileDocumentOutline });
             // Add "اضافة عرض سعر" menu item
             salesAndInvoices.Children.Add(new MenuItem
             {
@@ -115,11 +115,11 @@ namespace POS.Views
             });
 
             var inventoryAndPurchases = new MenuItem { Name = "المخزن والمشتريات", Identifier = "inventoryAndPurchases", Icon = PackIconKind.StoreOutline, IsClickable = false };
-            inventoryAndPurchases.Children.Add(new MenuItem { Name = "المخزن", Identifier = "inventory", Icon = PackIconKind.PackageVariant, RequiredClaim = "inventory" });
-            inventoryAndPurchases.Children.Add(new MenuItem { Name = "شراء بضاعة", Identifier = "purchaseGoods", Icon = PackIconKind.Shopping, RequiredClaim = "purchaseGoods" });
-            inventoryAndPurchases.Children.Add(new MenuItem { Name = "حركة بضاعة", Identifier = "goodsMovement", Icon = PackIconKind.Truck, RequiredClaim = "goodsMovement" });
-            inventoryAndPurchases.Children.Add(new MenuItem { Name = "تقرير المخزن", Identifier = "inventoryReport", Icon = PackIconKind.ChartBar, RequiredClaim = "inventoryReport" });
-            inventoryAndPurchases.Children.Add(new MenuItem { Name = "فواتير الشراء", Identifier = "purchaseInvoices", Icon = PackIconKind.FileDocumentOutline, RequiredClaim = "purchaseInvoices" });
+            inventoryAndPurchases.Children.Add(new MenuItem { Name = "المخزن", Identifier = "inventory", Icon = PackIconKind.PackageVariant });
+            inventoryAndPurchases.Children.Add(new MenuItem { Name = "شراء بضاعة", Identifier = "purchaseGoods", Icon = PackIconKind.Shopping });
+            inventoryAndPurchases.Children.Add(new MenuItem { Name = "حركة بضاعة", Identifier = "goodsMovement", Icon = PackIconKind.Truck });
+            inventoryAndPurchases.Children.Add(new MenuItem { Name = "تقرير المخزن", Identifier = "inventoryReport", Icon = PackIconKind.ChartBar });
+            inventoryAndPurchases.Children.Add(new MenuItem { Name = "فواتير الشراء", Identifier = "purchaseInvoices", Icon = PackIconKind.FileDocumentOutline });
 
             // Add "إضافة مرتجع مشتريات" menu item
             inventoryAndPurchases.Children.Add(new MenuItem
@@ -316,7 +316,7 @@ namespace POS.Views
         {
             if (selectedMenuItem.IsClickable)
             {
-               
+
 
                 UserControl newControl = CreateControlForMenuItem(selectedMenuItem);
 
@@ -354,7 +354,7 @@ namespace POS.Views
                     }
                 }
 
-              
+
             }
             else
             {
@@ -538,7 +538,7 @@ namespace POS.Views
                     Content = tab.Content // Use the existing content
                 };
                 // Add the "page" style to the tab item
-             
+
 
                 // Add the tab item back to the tab control
                 tabControlRenderPages.Items.Add(newTabItem);
@@ -593,7 +593,7 @@ namespace POS.Views
             tabControlRenderPages.Items.Remove(tabItem);
         }
 
-      
+
         private async void menuTreeView_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (menuTreeView.SelectedItem != null && menuTreeView.SelectedItem is MenuItem selectedMenuItem)
