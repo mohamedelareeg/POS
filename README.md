@@ -8,7 +8,7 @@ This repository contains the source code for a Point of Sale (POS) application d
 - **WPF:** The user interface is built using WPF (Windows Presentation Foundation) for a modern and intuitive user experience.
 
 ### Architecture
-- **Layered Architecture:** The application follows a layered architecture pattern, separating concerns into presentation, application, domain, persistence, and infrastructure layers.
+- **Clean Architecture:** The application is built on the principles of Clean Architecture, emphasizing separation of concerns and maintainability.
 - **Dependency Injection:** Utilizes Microsoft's Dependency Injection framework for managing object dependencies, promoting loose coupling and testability.
 
 ### Data Management
