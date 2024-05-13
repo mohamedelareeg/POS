@@ -24,6 +24,25 @@ This repository contains the source code for a Point of Sale (POS) application d
 
 ### Barcode Scanning
 - **ZXing.Net.Bindings.Windows.Compatibility:** Integrates ZXing.Net for barcode scanning functionalities, enabling efficient product entry through barcode scanning.
+## Screenshots
+
+1. **Sign-in Page:**
+   ![Sign-in Page](/screenshots/signin.png)
+
+2. **Dashboard:**
+   ![Dashboard](/screenshots/dashboard.png)
+
+3. **Sale Pages:**
+   ![Sale Pages](/screenshots/sales.png)
+
+4. **Inventory Page:**
+   ![Inventory Page](/screenshots/inventory.png)
+
+5. **Users:**
+   ![Users](/screenshots/users.png)
+
+6. **Permissions & Roles:**
+   ![Permissions & Roles](/screenshots/permissions_roles.png)
 
 ## Projects Structure
 
@@ -81,26 +100,6 @@ The application comes with pre-configured default users for testing purposes:
   - Password: 123
 
 These default users can be used to access the application and test its functionalities.
-
-## Screenshots
-
-1. **Sign-in Page:**
-   ![Sign-in Page](/screenshots/signin.png)
-
-2. **Dashboard:**
-   ![Dashboard](/screenshots/dashboard.png)
-
-3. **Sale Pages:**
-   ![Sale Pages](/screenshots/sales.png)
-
-4. **Inventory Page:**
-   ![Inventory Page](/screenshots/inventory.png)
-
-5. **Users:**
-   ![Users](/screenshots/users.png)
-
-6. **Permissions & Roles:**
-   ![Permissions & Roles](/screenshots/permissions_roles.png)
 
 ## Additional Features
 
