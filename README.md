@@ -84,8 +84,6 @@ These default users can be used to access the application and test its functiona
 
 ## Screenshots
 
-## Screenshots
-
 1. **Sign-in Page:**
    ![Sign-in Page](/screenshots/signin.png)
 
